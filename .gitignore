@@ -1,0 +1,77 @@
+# .NET Core
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+*.log
+*.tmp
+*.temp
+*.cache
+*.pidb
+*.userprefs
+
+# Database
+*.mdf
+*.ldf
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+.env.local
+appsettings.Development.json
+appsettings.Production.json
+
+# Secrets
+secrets.json
+
+# Build outputs
+[Dd]ebug/
+[Rr]elease/
+packages/
+*.nupkg
+*.snupkg
+
+# IDE
+.idea/
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+
+# OS files
+Thumbs.db
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Logs
+logs/
+log/
+*.log
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Node (if any)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Publish
+*.pubxml
+*.publishproj
+publish/
