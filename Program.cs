@@ -18,11 +18,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 42))));
 
-// FIX FOR MONSTERASP SHARED HOSTING (Persist Security Keys)
-var keysPath = Path.Combine(builder.Environment.ContentRootPath, "..", "keys");
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
-    .SetApplicationName("StokSafe");
+
 
 
 // 2. ASP.NET Core Identity
