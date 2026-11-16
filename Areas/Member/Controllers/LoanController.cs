@@ -93,8 +93,8 @@ public class LoanController : Controller
                         <p>Your loan application has been successfully submitted and is currently pending review.</p>
                         <table style='width: 100%; border-collapse: collapse; margin-top: 15px;'>
                             <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Reference:</strong></td><td style='padding: 8px; border-bottom: 1px solid #eee;'>LN-{loan.Id:D5}</td></tr>
-                            <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Amount:</strong></td><td style='padding: 8px; border-bottom: 1px solid #eee;'>R {principal:N2}</td></tr>
-                            <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Term:</strong></td><td style='padding: 8px; border-bottom: 1px solid #eee;'>{termMonths} months</td></tr>
+                            <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Amount to Repay:</strong></td><td style='padding: 8px; border-bottom: 1px solid #eee;'>R {loan.TotalAmountDue:N2} <small>(Includes 50% interest)</small></td></tr>
+                            <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Term:</strong></td><td style='padding: 8px; border-bottom: 1px solid #eee;'>4 Weeks</td></tr>
                         </table>
                         <p style='margin-top: 20px;'>The committee will review your application shortly.</p>
                     </div>

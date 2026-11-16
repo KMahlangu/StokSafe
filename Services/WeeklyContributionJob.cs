@@ -43,6 +43,7 @@ public class WeeklyContributionJob : BackgroundService
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         await GenerateWeeklyContributionsAsync(db, ct);
+        await ApplyLoanPenaltiesAsync(db, ct);
         
         // DISABLED FOR DEVELOPMENT
         // await ApplyMissedContributionFinesAsync(db, ct);
@@ -75,6 +76,36 @@ public class WeeklyContributionJob : BackgroundService
                 ContributionDate = weekStart,
                 DueDate = dueDate
             });
+        }
+        await db.SaveChangesAsync(ct);
+    }
+    
+    private async Task ApplyLoanPenaltiesAsync(ApplicationDbContext db, CancellationToken ct)
+    {
+        var now = DateTime.UtcNow;
+        
+        // Find Active loans past their due date
+        var overdueLoans = await db.Loans
+            .Where(l => l.Status == LoanStatus.Active && l.DueDate < now)
+            .ToListAsync(ct);
+
+        foreach (var loan in overdueLoans)
+        {
+            // Calculate how many weeks overdue (at least 1 if it just passed)
+            var weeksPastDue = (int)Math.Ceiling((now - loan.DueDate!.Value).TotalDays / 7.0);
+            
+            // If it's a new week overdue that we haven't penalized yet
+            if (weeksPastDue > loan.WeeksOverdue)
+            {
+                // Double the balance
+                loan.OutstandingBalance *= 2;
+                loan.TotalAmountDue = loan.OutstandingBalance;
+                loan.WeeksOverdue = weeksPastDue;
+                loan.Status = LoanStatus.Overdue; // Mark as overdue
+                
+                // Update the due date to push it out another 7 days for the next check
+                loan.DueDate = loan.DueDate.Value.AddDays(7 * (weeksPastDue - loan.WeeksOverdue)); 
+            }
         }
         await db.SaveChangesAsync(ct);
     }
