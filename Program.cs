@@ -25,8 +25,6 @@ builder.Services.AddDataProtection()
     .SetApplicationName("StokSafe");
 
 
-
-
 // 2. ASP.NET Core Identity
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 {
