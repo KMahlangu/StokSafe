@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #F8FAFC;
+    color: #0A2540;
+}
+
+/* Premium Navbar */
+.navbar-custom {
+    background-color: #0A2540 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+.navbar-custom .navbar-brand {
+    font-weight: 700;
+    color: #FFFFFF !important;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+.navbar-custom .nav-link {
+    color: #E2E8F0 !important;
+    font-weight: 500;
+    transition: color 0.2s;
+    margin: 0 10px;
+}
+
+.navbar-custom .nav-link:hover, .navbar-custom .nav-link.active {
+    color: #00D09C !important;
+}
+
+/* Premium Cards */
+.premium-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.premium-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Buttons */
+.btn-accent {
+    background-color: #00D09C;
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    padding: 10px 24px;
+    transition: all 0.2s;
+}
+
+.btn-accent:hover {
+    background-color: #00B588;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.btn-outline-accent {
+    border: 2px solid #00D09C;
+    color: #00D09C;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 8px 20px;
+}
+
+.btn-outline-accent:hover {
+    background-color: #00D09C;
+    color: #FFFFFF;
+}
+
+/* Forms */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #E2E8F0;
+    padding: 12px 16px;
+    background-color: #F8FAFC;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #00D09C;
+    box-shadow: 0 0 0 3px rgba(0, 208, 156, 0.1);
+    background-color: #FFFFFF;
+}
+
+/* Typography Helpers */
+.balance-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: #0A2540;
+}
+
+.text-muted-premium {
+    color: #64748B !important;
+}
+/* Premium Footer */
+.footer-premium {
+    background-color: #0A2540;
+    color: #E2E8F0;
+    border-top: 4px solid #00D09C;
+}
+
+.footer-premium h5 {
+    color: #FFFFFF;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+.footer-premium p, .footer-premium li {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #94A3B8;
+}
+
+.footer-premium a {
+    color: #94A3B8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-premium a:hover {
+    color: #00D09C;
+}
+
+.footer-premium .social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-right: 10px;
+    color: #FFFFFF;
+}
+
+.footer-premium .social-icons a:hover {
+    background-color: #00D09C;
+}
+
+.footer-bottom {
+    background-color: #071A2E;
+    padding: 20px 0;
+    font-size: 0.85rem;
+}

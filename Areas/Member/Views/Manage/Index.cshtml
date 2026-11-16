@@ -1,0 +1,81 @@
+@functions {
+    public string MaskAccount(string? accountNumber)
+    {
+        if (string.IsNullOrWhiteSpace(accountNumber)) return "Not provided";
+        if (accountNumber.Length <= 4) return accountNumber;
+        return new string('*', accountNumber.Length - 4) + accountNumber.Substring(accountNumber.Length - 4);
+    }
+}
+@model StokSafe.Models.User
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4">My Profile</h2>
+    <div class="premium-card p-4 mb-4 text-center">
+        <h5 class="text-start mb-3">Profile Picture</h5>
+        <img src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "/images/default-avatar.png" : Model.ProfilePicture)" 
+             class="rounded-circle mb-3 shadow" style="width: 120px; height: 120px; object-fit: cover;" />
+        
+        <form action="/Member/Manage/UploadProfilePicture" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div class="input-group mx-auto" style="max-width: 300px;">
+                <input type="file" name="profilePicture" class="form-control" accept=".jpg,.jpeg,.png" required />
+                <button type="submit" class="btn btn-accent">Upload</button>
+            </div>
+        </form>
+    </div>
+
+    @if (TempData["Success"] is string success)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @success
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form action="/Member/Manage/UpdateProfile" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <h5 class="mb-3 text-primary">Contact Info</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number</label>
+                                <input type="text" name="phoneNumber" class="form-control" value="@Model.PhoneNumber" placeholder="+27..." />
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4 text-primary">Bank Details (For Loan Payouts)</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Bank Name</label>
+                                <input type="text" name="bankName" class="form-control" value="@Model.BankName" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Account Holder</label>
+                                <input type="text" name="bankAccountHolder" class="form-control" value="@Model.BankAccountHolder" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label">Account Number</label>
+                                <input type="text" name="bankAccountNumber" class="form-control" value="@MaskAccount(Model.BankAccountNumber)" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Branch Code</label>
+                                <input type="text" name="bankBranchCode" class="form-control" value="@Model.BankBranchCode" />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

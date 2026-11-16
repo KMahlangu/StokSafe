@@ -1,0 +1,118 @@
+@using StokSafe.Models.Enums
+@model StokSafe.Models.ViewModels.MemberDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container mt-4 mb-5">
+
+        <!-- Hero Section -->
+    <div class="premium-card p-4 mb-4 position-relative overflow-hidden" style="background: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(10, 37, 64, 0.95) 0%, rgba(26, 59, 92, 0.8) 100%);"></div>
+        <div class="position-relative" style="z-index: 1; color: white;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Hello, @(Model.User.DisplayName ?? "Member")</h5>
+                <span class="badge bg-success bg-opacity-25 text-white border border-success">@Model.Membership?.Role</span>
+            </div>
+            <p class="text-white-50 mb-1">Total Savings</p>
+            <h1 class="balance-amount text-white">R @Model.TotalContributionsThisMonth.ToString("N2")</h1>
+            <p class="text-white-50 mb-0 mt-3"><i class="bi bi-info-circle"></i> Next contribution due this Sunday at 15:00</p>
+        </div>
+    </div>
+    }
+
+    <!-- Quick Actions -->
+    <div class="row g-3 mb-4">
+        <div class="col-4">
+            <a asp-area="Member" asp-controller="Contribution" asp-action="Index" class="text-decoration-none">
+                <div class="premium-card p-3 text-center h-100">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 48px; height: 48px;">
+                        <i class="bi bi-wallet2 fs-5"></i>
+                    </div>
+                    <h6 class="mb-0 text-dark" style="font-size: 0.85rem;">Contribute</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-4">
+            <a asp-area="Member" asp-controller="Loan" asp-action="Apply" class="text-decoration-none">
+                <div class="premium-card p-3 text-center h-100">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 48px; height: 48px;">
+                        <i class="bi bi-cash-stack fs-5"></i>
+                    </div>
+                    <h6 class="mb-0 text-dark" style="font-size: 0.85rem;">Get Loan</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-4">
+            <a asp-area="Member" asp-controller="Statement" asp-action="Index" class="text-decoration-none">
+                <div class="premium-card p-3 text-center h-100">
+                    <div class="bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 48px; height: 48px;">
+                        <i class="bi bi-file-earmark-text fs-5"></i>
+                    </div>
+                    <h6 class="mb-0 text-dark" style="font-size: 0.85rem;">Statement</h6>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-6">
+            <div class="premium-card p-3">
+                <p class="text-muted-premium mb-1 small text-uppercase fw-bold">Active Loans</p>
+                <h4 class="mb-0">@Model.ActiveLoansCount</h4>
+                <small class="text-danger">R @Model.TotalLoanBalance.ToString("N2") owed</small>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="premium-card p-3">
+                <p class="text-muted-premium mb-1 small text-uppercase fw-bold">Unpaid Fines</p>
+                <h4 class="mb-0">@Model.PendingFinesCount</h4>
+                <small class="text-warning">R @Model.TotalOutstandingFines.ToString("N2") due</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <h5 class="fw-bold mb-3">Recent Activity</h5>
+    <div class="premium-card p-0 overflow-hidden">
+        <div class="list-group list-group-flush">
+            @if (!Model.RecentContributions.Any() && !Model.RecentFines.Any())
+            {
+                <div class="p-4 text-center text-muted-premium">No recent activity.</div>
+            }
+            @foreach (var c in Model.RecentContributions.Take(3))
+            {
+                <div class="list-group-item p-3 border-0 border-bottom d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-arrow-down-left"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">Contribution</h6>
+                        <small class="text-muted-premium">@c.ContributionDate.ToString("dd MMM yyyy")</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="fw-bold">R @c.Amount.ToString("N2")</span><br/>
+                        <small class="text-success">@c.Status</small>
+                    </div>
+                </div>
+            }
+            @foreach (var f in Model.RecentFines.Take(2))
+            {
+                <div class="list-group-item p-3 border-0 border-bottom d-flex align-items-center">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">Fine: @f.FineType</h6>
+                        <small class="text-muted-premium">@f.CreatedAt.ToString("dd MMM yyyy")</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="fw-bold text-danger">-R @f.Balance.ToString("N2")</span><br/>
+                        <small class="text-muted-premium">@f.Status</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Financial Reports";
+}
+<div class="container mt-4">
+    <h1 class="fw-bold mb-4"><i class="bi bi-bar-chart-line"></i> Financial Reports</h1>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100 border-top border-success border-4">
+                <div class="card-body text-center">
+                    <h5 class="text-muted"><i class="bi bi-wallet2"></i> Contributions</h5>
+                    <hr />
+                    <p class="mb-1 text-muted small">This Week</p>
+                    <h4 class="text-success">R @ViewBag.WeeklyContrib.ToString("N2")</h4>
+                    <p class="mb-1 text-muted small mt-3">This Month</p>
+                    <h4 class="text-success">R @ViewBag.MonthlyContrib.ToString("N2")</h4>
+                    <p class="mb-1 text-muted small mt-3">All Time</p>
+                    <h3 class="text-success fw-bold">R @ViewBag.TotalContrib.ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100 border-top border-warning border-4">
+                <div class="card-body text-center">
+                    <h5 class="text-muted"><i class="bi bi-exclamation-triangle"></i> Fines Paid</h5>
+                    <hr />
+                    <p class="mb-1 text-muted small">This Week</p>
+                    <h4 class="text-warning">R @ViewBag.WeeklyFines.ToString("N2")</h4>
+                    <p class="mb-1 text-muted small mt-3">This Month</p>
+                    <h4 class="text-warning">R @ViewBag.MonthlyFines.ToString("N2")</h4>
+                    <p class="mb-1 text-muted small mt-3">All Time</p>
+                    <h3 class="text-warning fw-bold">R @ViewBag.TotalFines.ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100 border-top border-primary border-4">
+                <div class="card-body text-center">
+                    <h5 class="text-muted"><i class="bi bi-cash-stack"></i> Loans Taken</h5>
+                    <hr />
+                    <p class="mb-1 text-muted small">This Week</p>
+                    <h4 class="text-primary">R @ViewBag.WeeklyLoans.ToString("N2")</h4>
+                    <p class="mb-1 text-muted small mt-3">This Month</p>
+                    <h4 class="text-primary">R @ViewBag.MonthlyLoans.ToString("N2")</h4>
+                    <p class="mb-1 text-muted small mt-3">All Time</p>
+                    <h3 class="text-primary fw-bold">R @ViewBag.TotalLoans.ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

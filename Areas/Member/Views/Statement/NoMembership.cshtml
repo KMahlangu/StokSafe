@@ -1,0 +1,11 @@
+@{
+    ViewData["Title"] = "Statement";
+}
+<div class="container mt-4">
+    <div class="alert alert-warning">
+        <h4>No club membership found</h4>
+        <p>Statements are only available for members of a club. Contact your club admin.</p>
+        <a asp-area="Member" asp-controller="Dashboard" asp-action="Index"
+           class="btn btn-outline-primary">Back to Dashboard</a>
+    </div>
+</div>

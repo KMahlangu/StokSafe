@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StokSafe</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/images/logo.png" alt="StokSafe" height="32" class="me-2" onerror="this.style.display='none'"> StokSafe
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Member" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Member" asp-controller="Contribution" asp-action="Index">Contributions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Member" asp-controller="Loan" asp-action="Index">Loans</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Member" asp-controller="Fine" asp-action="Index">Fines</a>
+                        </li>
+                    }
+                </ul>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+        <!-- Contextual Stokvel Footer -->
+    <footer class="footer-premium mt-5">
+        <div class="container py-5">
+            <div class="row g-4">
+                <!-- Brand & Mission -->
+                <div class="col-lg-4 col-md-6">
+                    <h5><img src="~/images/logo.png" alt="StokSafe" height="32" class="me-2" onerror="this.style.display='none'"> StokSafe</h5>
+                    <p>
+                        Modernizing South African stokvels. We provide a transparent, automated platform for community savings, loans, and fine management—removing the WhatsApp chaos.
+                    </p>
+                    <div class="social-icons mt-4">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6">
+                    <h5>Platform</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a asp-area="Member" asp-controller="Dashboard" asp-action="Index">My Dashboard</a></li>
+                        <li class="mb-2"><a asp-area="Member" asp-controller="Contribution" asp-action="Index">Contributions</a></li>
+                        <li class="mb-2"><a asp-area="Member" asp-controller="Loan" asp-action="Index">Loans</a></li>
+                        <li class="mb-2"><a asp-area="Member" asp-controller="Statement" asp-action="Index">Statements</a></li>
+                    </ul>
+                </div>
+
+                <!-- Compliance & Legal (Crucial for SA Fintech) -->
+                <div class="col-lg-3 col-md-6">
+                    <h5>Compliance</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">POPIA Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#">Terms of Service</a></li>
+                        <li class="mb-2"><a href="#">FICA Disclaimer</a></li>
+                        <li class="mb-2"><a href="#">NASASA Resources</a></li>
+                    </ul>
+                </div>
+
+                <!-- Stokvel Context & Support -->
+                <div class="col-lg-3 col-md-6">
+                    <h5>Stokvel Support</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="mailto:support@stoksafe.co.za">support@stoksafe.co.za</a>
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-telephone me-2"></i>
+                            +27 (0) 10 123 4567
+                        </li>
+                        <li>
+                            <div class="alert alert-dark border-secondary p-2 mb-0" style="font-size: 0.75rem;">
+                                <strong>Disclaimer:</strong> StokSafe is a software record-keeping tool. We are not a registered bank or financial services provider. Stokvels exceeding R100,000 must register with a self-regulatory body like NASASA.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="footer-bottom text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-md-start mb-2 mb-md-0">
+                        &copy; @DateTime.UtcNow.Year StokSafe. Built for the community.
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        Designed & Developed in South Africa ????
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

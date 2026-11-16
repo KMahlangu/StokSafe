@@ -1,0 +1,64 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container-fluid p-0">
+    <!-- HERO SECTION: Communicating Trust & Community -->
+    <div class="position-relative" style="background: url('https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover; height: 85vh;">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(10, 37, 64, 0.85);"></div>
+        <div class="container position-relative h-100 d-flex align-items-center">
+            <div class="row">
+                <div class="col-md-8 text-white">
+                    <h1 class="display-3 fw-bold mb-4" style="letter-spacing: -1px;">Modernize your Stokvel.</h1>
+                    <p class="lead fs-4 mb-5 text-light" style="max-width: 600px;">
+                        Secure, transparent, and fully digital. Track contributions, manage loans, and automate fines without the WhatsApp chaos.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a asp-controller="Auth" asp-action="Register" class="btn btn-accent btn-lg px-5 py-3 fw-bold">Join a Club</a>
+                        <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-light btn-lg px-5 py-3 fw-bold">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES: Telling the functional story -->
+    <div class="container py-5 mt-4">
+        <div class="row text-center mb-5">
+            <div class="col-md-8 mx-auto">
+                <h2 class="fw-bold mb-3">Built for the way you save.</h2>
+                <p class="text-muted-premium fs-5">StokSafe handles the rules so you can focus on growing your wealth together.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="premium-card p-4 h-100 text-center">
+                    <div class="mb-3">
+                        <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+                    </div>
+                    <h4 class="fw-bold">Automated Savings</h4>
+                    <p class="text-muted-premium">Members contribute weekly. Upload proof of payment and the Treasurer approves it instantly.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="premium-card p-4 h-100 text-center">
+                    <div class="mb-3">
+                        <img src="https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+                    </div>
+                    <h4 class="fw-bold">Smart Loans</h4>
+                    <p class="text-muted-premium">Borrow up to 50% of your contributions. The system calculates due dates and penalties automatically.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="premium-card p-4 h-100 text-center">
+                    <div class="mb-3">
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+                    </div>
+                    <h4 class="fw-bold">Digital Statements</h4>
+                    <p class="text-muted-premium">Receive monthly PDF statements via email. Complete transparency for every member, anytime.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid mt-4 mb-5 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Club Overview</h2>
+            <p class="text-muted-premium mb-0">Manage your stokvel's financial health</p>
+        </div>
+        <a href="/Admin/User" class="btn btn-accent"><i class="bi bi-people"></i> Manage Members</a>
+    </div>
+
+    <!-- KPI Stats -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="premium-card p-4 h-100 border-start border-4 border-success">
+                <p class="text-muted-premium text-uppercase fw-bold small mb-2">Total Club Savings</p>
+                <h2 class="mb-0">R @(((decimal)ViewBag.TotalContributions).ToString("N0"))</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="premium-card p-4 h-100 border-start border-4 border-danger">
+                <p class="text-muted-premium text-uppercase fw-bold small mb-2">Loans Outstanding</p>
+                <h2 class="mb-0">R @(((decimal)ViewBag.TotalLoansOut).ToString("N0"))</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="premium-card p-4 h-100 border-start border-4 border-warning">
+                <p class="text-muted-premium text-uppercase fw-bold small mb-2">Pending Approvals</p>
+                <h2 class="mb-0">@ViewBag.PendingMembers</h2>
+                <a href="/Admin/User" class="text-warning text-decoration-none small">Review now &rarr;</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="premium-card p-4 h-100 border-start border-4 border-primary">
+                <p class="text-muted-premium text-uppercase fw-bold small mb-2">Active Members</p>
+                <h2 class="mb-0">@ViewBag.TotalMembers</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Row -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="premium-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Loan Applications</h5>
+                    <span class="badge bg-primary rounded-pill">@ViewBag.PendingLoans Pending</span>
+                </div>
+                <p class="text-muted-premium">Review and approve pending loan requests from members.</p>
+                <a href="/Admin/Loan" class="btn btn-outline-accent w-100">Manage Loans</a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="premium-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Proof of Payments</h5>
+                    <span class="badge bg-warning text-dark rounded-pill">Action Needed</span>
+                </div>
+                <p class="text-muted-premium">Members have uploaded EFT receipts that require your approval.</p>
+                <a href="/Admin/ProofOfPayment" class="btn btn-outline-accent w-100">Review Receipts</a>
+            </div>
+        </div>
+    </div>
+</div>

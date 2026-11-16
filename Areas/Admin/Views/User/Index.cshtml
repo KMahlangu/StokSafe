@@ -1,0 +1,94 @@
+@using Microsoft.AspNetCore.Identity
+@using StokSafe.Models
+@using StokSafe.Models.Enums
+@model IEnumerable<StokSafe.Models.ClubMember>
+@inject UserManager<User> UserManager
+
+@{
+    ViewData["Title"] = "Manage Users";
+    var currentUser = await UserManager.GetUserAsync(User);
+    bool isHead = currentUser?.Role == UserRole.Head;
+}
+
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4">Club Members</h2>
+
+    @if (TempData["Success"] is string success)
+    {
+        <div class="alert alert-success alert-dismissible fade show">@success<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">@error<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Role</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var member in Model)
+                    {
+                        <tr>
+                            <td>@member.User.Name @member.User.Surname</td>
+                            <td>@member.User.Email</td>
+                            <td>@member.User.PhoneNumber</td>
+                            <td>
+                                @if (member.ApprovalStatus == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                                else if (member.ApprovalStatus == "Approved")
+                                {
+                                    <span class="badge bg-success">Approved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@member.ApprovalStatus</span>
+                                }
+                            </td>
+                            <td>
+                                @if (member.ApprovalStatus == "Approved")
+                                {
+                                    if (isHead)
+                                    {
+                                        <form asp-action="ChangeRole" asp-route-id="@member.Id" method="post" class="d-flex align-items-center gap-2">
+                                            <select name="newRole" class="form-select form-select-sm" onchange="this.form.submit()" asp-items="Html.GetEnumSelectList<UserRole>()">
+                                                <option value="@member.Role" selected>@member.Role</option>
+                                            </select>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">@member.Role</span>
+                                    }
+                                }
+                            </td>
+                            <td class="text-end">
+                                @if (member.ApprovalStatus == "Pending")
+                                {
+                                    <form asp-action="Accept" asp-route-id="@member.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                    </form>
+                                }
+                                
+                                <form asp-action="Reject" asp-route-id="@member.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to reject/remove this user?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">@(member.ApprovalStatus == "Pending" ? "Reject" : "Remove")</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

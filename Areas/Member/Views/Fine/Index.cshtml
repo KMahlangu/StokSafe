@@ -1,0 +1,128 @@
+@using StokSafe.Models.Enums
+@model IEnumerable<StokSafe.Models.Fine>
+@{
+    ViewData["Title"] = "My Fines";
+    var unpaidFines = Model.Where(f => f.Balance > 0).ToList();
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold mb-0"><i class="bi bi-exclamation-triangle"></i> My Fines</h1>
+        
+        @if (unpaidFines.Any())
+        {
+            <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#payFinesModal">
+                <i class="bi bi-cash-coin"></i> Pay Outstanding Fines
+            </button>
+        }
+    </div>
+
+    @if (TempData["Success"] is string success) { <div class="alert alert-success alert-dismissible fade show">@success <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+    @if (TempData["Error"] is string error) { <div class="alert alert-danger alert-dismissible fade show">@error <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+
+    <div class="card shadow-sm border-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Reason</th>
+                    <th class="text-end">Original Amount</th>
+                    <th class="text-end">Outstanding Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any()) { <tr><td colspan="5" class="text-center py-4">No fines on record! ??</td></tr> }
+                
+                @foreach (var fine in Model)
+                {
+                    <tr>
+                        <td>@fine.CreatedAt.ToString("yyyy-MM-dd")</td>
+                        <td>@fine.FineType</td>
+                        <td class="text-end">R @fine.OriginalAmount.ToString("N2")</td>
+                        <td class="text-end fw-bold @(fine.Balance > 0 ? "text-danger" : "text-success")">
+                            R @fine.Balance.ToString("N2")
+                        </td>
+                        <td>
+                            @if (fine.Balance <= 0)
+                            {
+                                <span class="badge bg-success">Paid</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">@fine.Status</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- PAY FINES MODAL -->
+@if (unpaidFines.Any())
+{
+    <div class="modal fade" id="payFinesModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Pay" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-cash-coin"></i> Pay Fine</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Fine to Pay</label>
+                            <select id="fineDropdown" name="id" class="form-select" required>
+                                <option value="" data-balance="0">-- Select an outstanding fine --</option>
+                                @foreach (var fine in unpaidFines)
+                                {
+                                    <option value="@fine.Id" data-balance="@fine.Balance.ToString("F2")">
+                                        @fine.FineType (R @fine.Balance.ToString("N2"))
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Amount to Pay (R)</label>
+                            <input type="number" step="0.01" min="0.01" name="amount" id="amountInput" 
+                                   class="form-control form-control-lg" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Reference (Optional)</label>
+                            <input type="text" name="reference" class="form-control" placeholder="e.g. EFT-2026-001" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Confirm Payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Automatically fill the amount input when a fine is selected
+        document.getElementById('fineDropdown').addEventListener('change', function () {
+            var selectedOption = this.options[this.selectedIndex];
+            var balance = selectedOption.getAttribute('data-balance');
+            var amountInput = document.getElementById('amountInput');
+            
+            if (balance && balance !== "0") {
+                amountInput.value = balance;
+                amountInput.max = balance;
+            } else {
+                amountInput.value = "";
+                amountInput.removeAttribute('max');
+            }
+        });
+    </script>
+}

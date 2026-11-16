@@ -1,0 +1,47 @@
+@using Microsoft.AspNetCore.Identity
+@using StokSafe.Models
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+    var displayName = user?.DisplayName ?? "User";
+    var profilePic = string.IsNullOrEmpty(user?.ProfilePicture) ? "/images/default-avatar.png" : user.ProfilePicture;
+    <img src="@profilePic" alt="Profile" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+             @displayName
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+            <li><a class="dropdown-item" asp-area="Member" asp-controller="Manage" asp-action="Index">My Profile</a></li>
+            @if (User.IsInRole("Admin") || User.IsInRole("Head") || User.IsInRole("Treasurer"))
+            {
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Dashboard</a></li>
+                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Club" asp-action="Index">Manage Clubs</a></li>
+
+                <li><a class="dropdown-item" asp-area="Admin" asp-controller="ProofOfPayment" asp-action="Index">Review POPs</a></li>
+            }
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form class="form-inline" asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dropdown-item text-danger">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Auth" asp-action="Login">Login</a>
+    </li>
+    <li class="nav-item ms-2">
+        <a class="btn btn-accent btn-sm mt-1" asp-area="" asp-controller="Auth" asp-action="Register">Register</a>
+    </li>
+}
+</ul>

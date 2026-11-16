@@ -1,0 +1,119 @@
+@model StokSafe.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <!-- Original Form Container starts here -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h3 class="text-center mb-4">Join StokSafe</h3>
+                    
+                    <form action="/Auth/Register" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Name" class="form-label"></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Surname" class="form-label"></label>
+                                <input asp-for="Surname" class="form-control" />
+                                <span asp-validation-for="Surname" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="form-label"></label>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="+27..." />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <!-- Role Dropdown First -->
+                            <div class="col-md-6">
+                                <label asp-for="Role" class="form-label"></label>
+                                <select asp-for="Role" id="RoleDropdown" class="form-select" asp-items="Html.GetEnumSelectList<StokSafe.Models.Enums.UserRole>()">
+                                    <option value="">-- Select a Role --</option>
+                                </select>
+                                <span asp-validation-for="Role" class="text-danger"></span>
+                            </div>
+                            
+                            <!-- Club Dropdown (Can be hidden) -->
+                            <div class="col-md-6" id="ClubDropdownContainer">
+                                <label asp-for="ClubId" class="form-label"></label>
+                                <select asp-for="ClubId" id="ClubDropdown" class="form-select">
+                                    <option value="">-- Select a Club --</option>
+                                    @if (Model.AvailableClubs != null)
+                                    {
+                                        @foreach (var club in Model.AvailableClubs)
+                                        {
+                                            <option value="@club.Value">@club.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="ClubId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Password" class="form-label"></label>
+                                <input asp-for="Password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ConfirmPassword" class="form-label"></label>
+                                <input asp-for="ConfirmPassword" class="form-control" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const roleDropdown = document.getElementById("RoleDropdown");
+            const clubContainer = document.getElementById("ClubDropdownContainer");
+            const clubDropdown = document.getElementById("ClubDropdown");
+
+            function toggleClubDropdown() {
+                // Get the currently selected option text
+                const selectedText = roleDropdown.options[roleDropdown.selectedIndex].text;
+                
+                if (selectedText === "Admin") {
+                    clubContainer.style.display = "none"; // Hide the club dropdown
+                    clubDropdown.removeAttribute("required"); // Remove HTML5 validation
+                    clubDropdown.value = ""; // Clear the selection
+                } else {
+                    clubContainer.style.display = "block"; // Show the club dropdown
+                }
+            }
+
+            roleDropdown.addEventListener("change", toggleClubDropdown);
+            
+            // Run on page load in case "Admin" was pre-selected
+            toggleClubDropdown();
+        });
+    </script>
+}
