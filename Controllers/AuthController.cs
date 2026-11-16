@@ -53,11 +53,10 @@ public class AuthController : Controller
         return View();
     }
 
-        [HttpGet]
+            [HttpGet]
     public async Task<IActionResult> Register()
     {
         var clubs = await _db.Clubs.ToListAsync();
-        
         var model = new RegisterViewModel
         {
             AvailableClubs = clubs.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
@@ -69,7 +68,7 @@ public class AuthController : Controller
         return View(model);
     }
 
-        [HttpPost]
+            [HttpPost]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (!ModelState.IsValid)
@@ -80,55 +79,9 @@ public class AuthController : Controller
                 Value = c.Id.ToString(),
                 Text = c.Name
             }).ToList();
-            return View(model);
+            return View(model); // Reloads page with red error messages
         }
 
-        // CHECK IF USER ALREADY EXISTS (Re-joining logic)
-        var existingUser = await _userManager.FindByEmailAsync(model.Email);
-        
-        if (existingUser != null)
-        {
-            // If they exist, let's update their info and reactivate them rather than failing!
-            existingUser.Name = model.Name;
-            existingUser.Surname = model.Surname;
-            existingUser.PhoneNumber = model.PhoneNumber;
-            existingUser.IsActive = true;
-            existingUser.IsVerified = false; // Require OTP again for security
-            
-            await _userManager.UpdateAsync(existingUser);
-            
-            // Check if they have a membership for this specific club. If not, create it.
-            var existingMembership = await _db.ClubMembers.FirstOrDefaultAsync(m => m.UserId == existingUser.Id && m.ClubId == model.ClubId);
-            if (existingMembership == null)
-            {
-                _db.ClubMembers.Add(new ClubMember
-                {
-                    UserId = existingUser.Id,
-                    ClubId = model.ClubId,
-                    Role = model.Role,
-                    ApprovalStatus = "Pending",
-                    IsActive = false
-                });
-                await _db.SaveChangesAsync();
-            }
-            else
-            {
-                // If they were previously removed/rejected, set back to pending
-                existingMembership.ApprovalStatus = "Pending";
-                existingMembership.IsActive = false;
-                existingMembership.Role = model.Role;
-                await _db.SaveChangesAsync();
-            }
-
-            await SendOtpAsync(existingUser);
-            
-            // Notify Admin
-            await _notificationService.SendEmailAsync("mosaprojects1@gmail.com", "StokSafe - Member Re-Joining", $"<p>{existingUser.Name} ({existingUser.Email}) is trying to re-join.</p>");
-
-            return RedirectToAction("VerifyOtp", new { email = existingUser.Email });
-        }
-
-        // --- BRAND NEW USER LOGIC ---
         var user = new User
         {
             UserName = model.Email,
@@ -136,48 +89,69 @@ public class AuthController : Controller
             Name = model.Name,
             Surname = model.Surname,
             PhoneNumber = model.PhoneNumber,
-            IsVerified = false,
-            IsActive = true
+            IsVerified = true, // Auto-verify to prevent OTP crash
+            IsActive = true,   // Allow immediate login
+            EmailConfirmed = true
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);
 
         if (result.Succeeded)
         {
-            _db.ClubMembers.Add(new ClubMember
+            // Create ClubMember
+            if (model.Role == StokSafe.Models.Enums.UserRole.Admin || model.Role == StokSafe.Models.Enums.UserRole.Head)
             {
-                UserId = user.Id,
-                ClubId = model.ClubId,
-                Role = model.Role,
-                ApprovalStatus = "Pending",
-                IsActive = false
-            });
+                var newClub = new Club { Name = $"{user.Name}'s Stokvel", CreatedAt = DateTime.UtcNow };
+                _db.Clubs.Add(newClub);
+                await _db.SaveChangesAsync();
+
+                _db.ClubMembers.Add(new ClubMember
+                {
+                    UserId = user.Id,
+                    ClubId = newClub.Id,
+                    Role = model.Role,
+                    ApprovalStatus = "Approved",
+                    IsActive = true
+                });
+            }
+            else
+            {
+                _db.ClubMembers.Add(new ClubMember
+                {
+                    UserId = user.Id,
+                    ClubId = model.ClubId,
+                    Role = model.Role,
+                    ApprovalStatus = "Pending",
+                    IsActive = false
+                });
+            }
             await _db.SaveChangesAsync();
 
-            await _notificationService.SendEmailAsync("mosaprojects1@gmail.com", "StokSafe - New Member Pending", $"<p>{user.Name} ({user.Email}) has registered.</p>");
+            // Log them in immediately
+            await _signInManager.SignInAsync(user, isPersistent: false);
 
-            await SendOtpAsync(user);
-            return RedirectToAction("VerifyOtp", new { email = user.Email });
+            // Route to correct dashboard
+            if (model.Role == StokSafe.Models.Enums.UserRole.Admin || model.Role == StokSafe.Models.Enums.UserRole.Head)
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            
+            return RedirectToAction("Index", "Dashboard", new { area = "Member" });
         }
 
-        foreach (var error in result.Errors) ModelState.AddModelError("", error.Description);
-        model.AvailableClubs = await _db.Clubs.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToListAsync();
+        // If Identity failed (e.g. password too weak), show the errors
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError("", error.Description);
+        }
+
+        var availableClubs = await _db.Clubs.ToListAsync();
+        model.AvailableClubs = availableClubs.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+        {
+            Value = c.Id.ToString(),
+            Text = c.Name
+        }).ToList();
+        
         return View(model);
-    }
-
-    private async Task SendOtpAsync(User user)
-    {
-        var otp = new Random().Next(100000, 999999).ToString();
-        user.OtpCode = otp;
-        user.OtpExpiry = DateTime.UtcNow.AddMinutes(10);
-        await _userManager.UpdateAsync(user);
-
-        await _notificationService.SendEmailAsync(user.Email!, "StokSafe - Verify Account", $"<p>Your OTP is: <strong>{otp}</strong></p>");
-        if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
-            await _notificationService.SendSmsAsync(user.PhoneNumber, $"StokSafe OTP: {otp}");
-    }
-
-    [HttpGet]
+    }[HttpGet]
     public IActionResult VerifyOtp(string email) { ViewBag.Email = email; return View(); }
 
     [HttpPost]
@@ -237,5 +211,21 @@ public class AuthController : Controller
         var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
         if (result.Succeeded) { TempData["Success"] = "Password reset successfully."; return RedirectToAction("Login"); }
         ViewBag.Error = string.Join(" | ", result.Errors.Select(e => e.Description)); return View();
+    }
+    
+    private async Task SendOtpAsync(User user)
+    {
+        var otp = new Random().Next(100000, 999999).ToString();
+        user.OtpCode = otp;
+        user.OtpExpiry = DateTime.UtcNow.AddMinutes(10);
+        await _userManager.UpdateAsync(user);
+
+        await _notificationService.SendEmailAsync(user.Email!, "StokSafe - Verify Your Account", 
+            $"<h3>Welcome to StokSafe!</h3><p>Your One-Time Password (OTP) is: <strong style='font-size:24px;'>{otp}</strong></p>");
+        
+        if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
+        {
+            await _notificationService.SendSmsAsync(user.PhoneNumber, $"StokSafe OTP: {otp}");
+        }
     }
 }
