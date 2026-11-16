@@ -40,6 +40,11 @@ public class LoanDueReminderJob : BackgroundService
                     await Task.Delay(TimeSpan.FromMinutes(15), stoppingToken);
                 }
             }
+            catch (OperationCanceledException)
+            {
+                // This is normal when the app is shutting down. Ignore it.
+                break;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in LoanDueReminderJob");
