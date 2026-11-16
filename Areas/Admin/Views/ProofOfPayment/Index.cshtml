@@ -1,0 +1,86 @@
+@model IEnumerable<StokSafe.Models.ProofOfPayment>
+@{
+    ViewData["Title"] = "Review Proof of Payments";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Review Proof of Payments</h2>
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-secondary btn-sm">? Back to Dashboard</a>
+    </div>
+
+    @if (TempData["Success"] is string success)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @success
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="premium-card p-0 overflow-hidden">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Date Uploaded</th>
+                    <th>Member</th>
+                    <th>Payment For</th>
+                    <th>Receipt File</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var pop in Model)
+                    {
+                        <tr>
+                            <td>@pop.UploadedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="fw-bold">@pop.UploadedBy.Name @pop.UploadedBy.Surname</td>
+                            <td>
+                                @if (pop.Contribution != null)
+                                {
+                                    <span>Contribution (Week @pop.Contribution.WeekNumber)</span>
+                                }
+                                else if (pop.Fine != null)
+                                {
+                                    <span>Fine (@pop.Fine.FineType)</span>
+                                }
+                            </td>
+                            <td>
+                                <a href="@pop.FilePath" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-file-earmark-text"></i> View Receipt
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge @(pop.Status == "Pending" ? "bg-warning text-dark" : pop.Status == "Approved" ? "bg-success" : "bg-danger")">
+                                    @pop.Status
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                @if (pop.Status == "Pending")
+                                {
+                                    <form asp-action="Approve" asp-route-id="@pop.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                    </form>
+                                    <form asp-action="Reject" asp-route-id="@pop.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="reason" value="Invalid or unclear proof." />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted p-4">No Proof of Payments uploaded yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

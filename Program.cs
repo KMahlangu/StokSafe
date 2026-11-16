@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.RateLimiting;
-using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StokSafe.Data;
@@ -11,10 +9,13 @@ using StokSafe.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // 1. Database
-var connectionString = "Server=db79672.databaseasp.net;Port=3306;Database=db79672;User=db79672;Password=p#6A5B+nK?s3";
-builder.Services.AddDbContext<ApplicationDbContext>(options => 
-options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 42))));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 42))));
 
 // 2. ASP.NET Core Identity
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
@@ -43,8 +44,6 @@ builder.Services.AddScoped<ILoanService, LoanService>();
 builder.Services.AddScoped<IContributionService, ContributionService>();
 builder.Services.AddScoped<IStatementService, StatementService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
 
 builder.Services.AddHttpClient();
@@ -56,30 +55,10 @@ builder.Services.AddScoped<DbInitializer>();
 builder.Services.AddHostedService<WeeklyContributionJob>();
 builder.Services.AddHostedService<LoanDueReminderJob>();
 
-// Add Rate Limiting
-builder.Services.AddRateLimiter(options =>
-{
-    options.RejectionStatusCode = 429; // Too Many Requests
-    options.AddFixedWindowLimiter("login", opt =>
-    {
-        opt.PermitLimit = 5; // 5 attempts
-        opt.Window = TimeSpan.FromMinutes(1); // per minute
-        opt.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 0;
-    });
-});
-
 // 5. MVC
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
-// FIX FOR MONSTERASP PROXY & HTTPS DETECTION
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
-});
-
 
 // 6. Migrations & Seeding
 using (var scope = app.Services.CreateScope())
