@@ -44,6 +44,8 @@ builder.Services.AddScoped<ILoanService, LoanService>();
 builder.Services.AddScoped<IContributionService, ContributionService>();
 builder.Services.AddScoped<IStatementService, StatementService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
 
 builder.Services.AddHttpClient();
