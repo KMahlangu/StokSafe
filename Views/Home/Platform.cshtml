@@ -1,0 +1,111 @@
+@{
+    ViewData["Title"] = "Our Platform";
+}
+
+<style>
+    .platform-hero {
+        background: linear-gradient(rgba(10, 37, 64, 0.9), rgba(10, 37, 64, 0.9)), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+        color: white;
+        padding: 100px 0;
+        text-align: center;
+    }
+    .feature-row {
+        padding: 60px 0;
+        border-bottom: 1px solid #E2E8F0;
+    }
+    .feature-row:last-child {
+        border-bottom: none;
+    }
+    .feature-image {
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        object-fit: cover;
+        height: 400px;
+        width: 100%;
+    }
+    .feature-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0A2540;
+        margin-bottom: 20px;
+    }
+    .feature-list li {
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+        color: #475569;
+    }
+    .feature-list i {
+        color: #00D09C;
+        margin-right: 10px;
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="platform-hero">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4" style="letter-spacing: -1px;">Unlock Your Stokvel’s Full Potential</h1>
+        <p class="lead fs-4 mx-auto" style="max-width: 800px; color: #E2E8F0;">
+            Bringing your stokvel into the digital age without losing touch with its roots. Explore the features that make StokSafe the ultimate choice for community management.
+        </p>
+    </div>
+</div>
+
+<div class="container py-5">
+
+    <!-- Feature 1: Automated Management -->
+    <div class="row align-items-center feature-row">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="feature-image" alt="Automated Management" />
+        </div>
+        <div class="col-md-6 ps-md-5">
+            <h2 class="feature-title">Automated Rule Engine</h2>
+            <p class="text-muted-premium fs-5 mb-4">Managing your stokvel’s finances is now a breeze. We handle the math so you don't have to.</p>
+            <ul class="list-unstyled feature-list">
+                <li><i class="bi bi-check-circle-fill"></i> <strong>50% Loan Cap:</strong> Members can only borrow up to half their contributions.</li>
+                <li><i class="bi bi-check-circle-fill"></i> <strong>Auto Fines:</strong> Missing a weekly contribution automatically triggers a fine.</li>
+                <li><i class="bi bi-check-circle-fill"></i> <strong>100% Penalties:</strong> Unpaid loans double every week after the 4-week deadline.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Feature 2: Transparency -->
+    <div class="row align-items-center feature-row flex-md-row-reverse">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="feature-image" alt="Transparency" />
+        </div>
+        <div class="col-md-6 pe-md-5">
+            <h2 class="feature-title">Transparency & Accountability</h2>
+            <p class="text-muted-premium fs-5 mb-4">Your trust is our priority. With StokSafe, every transaction is visible, building a foundation of trust among members.</p>
+            <ul class="list-unstyled feature-list">
+                <li><i class="bi bi-check-circle-fill"></i> Live member dashboards showing exact balances.</li>
+                <li><i class="bi bi-check-circle-fill"></i> Digital Proof of Payment (POP) uploads for EFTs.</li>
+                <li><i class="bi bi-check-circle-fill"></i> Automated PDF statements emailed monthly.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Feature 3: Communication -->
+    <div class="row align-items-center feature-row">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="feature-image" alt="Communication" />
+        </div>
+        <div class="col-md-6 ps-md-5">
+            <h2 class="feature-title">Seamless Communication</h2>
+            <p class="text-muted-premium fs-5 mb-4">Beyond finances, we foster a vibrant community. Keep your members connected without the WhatsApp chaos.</p>
+            <ul class="list-unstyled feature-list">
+                <li><i class="bi bi-check-circle-fill"></i> Automated Email & SMS notifications for fines and loans.</li>
+                <li><i class="bi bi-check-circle-fill"></i> WhatsApp bot to instantly connect members with Admins.</li>
+                <li><i class="bi bi-check-circle-fill"></i> Secure OTP verification for all high-risk actions.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="bg-light py-5">
+    <div class="container text-center py-4">
+        <h2 class="fw-bold mb-3">Revolutionise your Stokvel</h2>
+        <p class="text-muted-premium mb-4 fs-5">Whether you belong to a burial society, a grocery stokvel, or have big property goals, StokSafe is here to help you do more, together.</p>
+        <a asp-controller="Auth" asp-action="Register" class="btn btn-accent btn-lg px-5 rounded-pill shadow">Get Started Today</a>
+    </div>
+</div>
