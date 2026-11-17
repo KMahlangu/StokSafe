@@ -234,7 +234,7 @@ public class AuthController : Controller
     {
         var otp = new Random().Next(100000, 999999).ToString();
         user.OtpCode = otp;
-        user.OtpExpiry = DateTime.UtcNow.AddMinutes(10);
+        user.OtpExpiry = DateTime.UtcNow.AddMinutes(5);
         await _userManager.UpdateAsync(user);
 
         await _notificationService.SendEmailAsync(user.Email!, "StokSafe - Verify Your Account",
@@ -255,5 +255,18 @@ public class AuthController : Controller
     {
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home", new { area = "" });
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendOtp(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return NotFound();
+
+        await SendOtpAsync(user);
+        
+        TempData["Success"] = "A new OTP has been sent to your email and phone.";
+        return RedirectToAction(nameof(VerifyOtp), new { email = email });
     }
 }
