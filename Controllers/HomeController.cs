@@ -64,4 +64,19 @@ public class HomeController : Controller
         }
         return Content($"User {email} not found.");
     }
+    
+    public IActionResult About()
+    {
+        return View();
+    }
+
+    public IActionResult Platform()
+    {
+        return View();
+    }
+
+    public IActionResult Pricing()
+    {
+        return View();
+    }
 }
