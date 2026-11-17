@@ -111,4 +111,27 @@ public class HomeController : Controller
         TempData["Success"] = "Thank you! Your message has been sent successfully. We will get back to you shortly.";
         return RedirectToAction(nameof(Contact));
     }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RequestCallback(string name, string phoneNumber, string preferredTime, [FromServices] INotificationService notificationService)
+    {
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(phoneNumber))
+        {
+            TempData["CallbackError"] = "Please provide your name and phone number.";
+            return RedirectToAction(nameof(Contact));
+        }
+
+        var emailBody = $@"
+            <h3>New Call Back Request</h3>
+            <p><strong>Name:</strong> {name}</p>
+            <p><strong>Phone Number:</strong> {phoneNumber}</p>
+            <p><strong>Preferred Time:</strong> {preferredTime ?? "Any time"}</p>
+        ";
+
+        await notificationService.SendEmailAsync("mosaprojects1@gmail.com", "StokSafe: Call Back Requested", emailBody);
+
+        TempData["CallbackSuccess"] = "Thank you! We have received your request and will call you back shortly.";
+        return RedirectToAction(nameof(Contact));
+    }
 }

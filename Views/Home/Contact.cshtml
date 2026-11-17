@@ -86,9 +86,9 @@
             <div class="contact-card">
                 <h3 class="fw-bold mb-4 text-dark">Send us a Message</h3>
                 
-                @if (TempData["Success"] is string success)
+                @if (TempData["Success"] is string emailSuccess)
                 {
-                    <div class="alert alert-success mb-4">@success</div>
+                    <div class="alert alert-success mb-4">@emailSuccess</div>
                 }
                 @if (ViewBag.Error != null)
                 {
@@ -120,6 +120,63 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call Back Section -->
+<div class="bg-light py-5">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center mb-5">
+                <h2 class="fw-bold mb-3">Prefer to speak to someone?</h2>
+                <p class="text-muted-premium fs-5">Leave your number and one of our StokSafe Care Consultants will call you back to help you get started.</p>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4 p-md-5">
+                        
+                        @if (TempData["CallbackSuccess"] is string callbackSuccessMsg)
+                        {
+                            <div class="alert alert-success mb-4">@callbackSuccessMsg</div>
+                        }
+                        @if (TempData["CallbackError"] is string callbackErrorMsg)
+                        {
+                            <div class="alert alert-danger mb-4">@callbackErrorMsg</div>
+                        }
+
+                        <form asp-action="RequestCallback" method="post">
+                            @Html.AntiForgeryToken()
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Your Name</label>
+                                <input type="text" name="name" class="form-control form-control-lg" required placeholder="e.g. Thabo Mokoena" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" name="phoneNumber" class="form-control form-control-lg" required placeholder="+27 82 123 4567" />
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Preferred Time</label>
+                                <select name="preferredTime" class="form-select form-select-lg">
+                                    <option value="Any time">Any time</option>
+                                    <option value="Morning (8am - 12pm)">Morning (8am - 12pm)</option>
+                                    <option value="Afternoon (12pm - 5pm)">Afternoon (12pm - 5pm)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-accent btn-lg w-100 shadow">
+                                <i class="bi bi-telephone-fill me-2"></i> Request a Call Back
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
