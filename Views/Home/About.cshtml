@@ -1,0 +1,135 @@
+@{
+    ViewData["Title"] = "Why Choose StokSafe";
+}
+
+<style>
+    .about-hero {
+        background: linear-gradient(rgba(10, 37, 64, 0.9), rgba(10, 37, 64, 0.9)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+        color: white;
+        padding: 100px 0;
+        text-align: center;
+    }
+    .value-card {
+        background: white;
+        border-radius: 16px;
+        padding: 40px 30px;
+        height: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-top: 4px solid #00D09C;
+    }
+    .value-icon {
+        font-size: 2.5rem;
+        color: #00D09C;
+        margin-bottom: 20px;
+    }
+    .quote-box {
+        background: #F8FAFC;
+        border-left: 5px solid #00D09C;
+        padding: 30px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-style: italic;
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="about-hero">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4" style="letter-spacing: -1px;">Why Choose the StokSafe Movement</h1>
+        <p class="lead fs-4 mx-auto" style="max-width: 800px; color: #E2E8F0;">
+            We know that your stokvel is more than just a collective savings group; it’s a community built on trust, care, and ambition. Our platform enriches these bonds while providing transformative opportunities for growth.
+        </p>
+    </div>
+</div>
+
+<!-- Core Values Section -->
+<div class="container py-5 mt-4">
+    <div class="row g-4">
+        
+        <div class="col-md-4">
+            <div class="value-card">
+                <i class="bi bi-bank value-icon"></i>
+                <h4 class="fw-bold mb-3">Building on Tradition</h4>
+                <p class="text-muted-premium">
+                    Your stokvel is a community institution, steeped in tradition and deeply meaningful beyond financial security. At StokSafe, we don't replace that—we amplify it. Our platform is rooted in respect for culture and community.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="value-card">
+                <i class="bi bi-shield-check value-icon"></i>
+                <h4 class="fw-bold mb-3">Secure, Transparent, Accountable</h4>
+                <p class="text-muted-premium">
+                    Trust is more than a word to us; it’s a covenant. Our platform is designed to ensure complete transparency in all transactions, fostering trust among members. We safeguard your information with industry-leading security.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="value-card">
+                <i class="bi bi-people-fill value-icon"></i>
+                <h4 class="fw-bold mb-3">Community Comes First</h4>
+                <p class="text-muted-premium">
+                    Our foundational value is collaboration. The power of collective effort is in our DNA. We know that each stokvel is unique, with its own set of needs and aspirations, which is why our approach is always community-first.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="value-card">
+                <i class="bi bi-graph-up-arrow value-icon"></i>
+                <h4 class="fw-bold mb-3">Economic Empowerment</h4>
+                <p class="text-muted-premium">
+                    StokSafe is more than a savings platform. We're a catalyst for economic empowerment. Our tools connect your stokvel with diversified savings opportunities that go beyond traditional financial services.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="value-card">
+                <i class="bi bi-lightbulb value-icon"></i>
+                <h4 class="fw-bold mb-3">Innovation for Your Benefit</h4>
+                <p class="text-muted-premium">
+                    Our commitment to innovation is homegrown, rooted in the spirit of our African roots. We constantly update our platform to bring you the latest financial tools and educational resources.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="value-card">
+                <i class="bi bi-mortarboard value-icon"></i>
+                <h4 class="fw-bold mb-3">Stellar Support and Education</h4>
+                <p class="text-muted-premium">
+                    We believe in empowering our community through knowledge. Our platform offers a range of educational tools, ensuring you're well-equipped to make informed decisions for your stokvel.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Philosophy Section -->
+<div class="bg-light py-5">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="quote-box text-center">
+                    <i class="bi bi-quote fs-1 text-accent"></i><br/>
+                    <span class="fw-bold text-dark">
+                        "Stokvels are the heartbeat of the South African economy. We built StokSafe to give the informal financial sector the enterprise-grade tools it deserves, without losing the human touch."
+                    </span>
+                    <br/><br/>
+                    <strong>— The StokSafe Team</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="container py-5 text-center">
+    <h2 class="fw-bold mb-3">Got Questions?</h2>
+    <p class="text-muted-premium mb-4 fs-5">Still unsure if StokSafe is right for your stokvel? Speak to our support team today.</p>
+    <a href="mailto:support@stoksafe.co.za" class="btn btn-outline-accent btn-lg px-5 rounded-pill me-2">Email Support</a>
+    <a asp-controller="Auth" asp-action="Register" class="btn btn-accent btn-lg px-5 rounded-pill shadow">Sign Up Today</a>
+</div>
