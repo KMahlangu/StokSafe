@@ -3,95 +3,37 @@
 }
 
 <style>
-    .pricing-header {
-        background: #0A2540;
-        color: white;
-        padding: 80px 0;
-        text-align: center;
-    }
-    .pricing-card {
-        border: 1px solid #E2E8F0;
-        border-radius: 16px;
-        background: white;
-        transition: all 0.3s ease;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    .pricing-card:hover {
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        transform: translateY(-5px);
-        border-color: #00D09C;
-    }
-    .pricing-card.featured {
-        border: 2px solid #00D09C;
-        position: relative;
-    }
-    .featured-badge {
-        position: absolute;
-        top: -15px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #00D09C;
-        color: white;
-        padding: 5px 20px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: bold;
-    }
-    .price-tag {
-        font-size: 3rem;
-        font-weight: 800;
-        color: #0A2540;
-    }
-    .price-period {
-        font-size: 1rem;
-        color: #64748B;
-        font-weight: normal;
-    }
-    .feature-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        flex-grow: 1;
-    }
-    .feature-list li {
-        padding: 10px 0;
-        border-bottom: 1px solid #F8FAFC;
-        color: #475569;
-    }
-    .feature-list li i {
-        color: #00D09C;
-        margin-right: 10px;
-    }
-    .feature-list li.disabled {
-        color: #CBD5E1;
-        text-decoration: line-through;
-    }
-    .feature-list li.disabled i {
-        color: #CBD5E1;
-    }
+    .price-header { background: #0A2540; color: white; padding: 80px 0; text-align: center; }
+    .price-card { border: 1px solid #E2E8F0; border-radius: 16px; background: white; transition: 0.3s; height: 100%; display: flex; flex-direction: column; }
+    .price-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); transform: translateY(-5px); border-color: #00D09C; }
+    .price-card.featured { border: 2px solid #00D09C; position: relative; box-shadow: 0 10px 30px rgba(0, 208, 156, 0.15); }
+    .featured-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #00D09C; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }
+    .price-tag { font-size: 3rem; font-weight: 800; color: #0A2540; }
+    .price-period { font-size: 1rem; color: #64748B; font-weight: normal; }
+    .feature-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+    .feature-list li { padding: 10px 0; border-bottom: 1px solid #F8FAFC; color: #475569; }
+    .feature-list li i { color: #00D09C; margin-right: 10px; }
+    .feature-list li.disabled { color: #CBD5E1; text-decoration: line-through; }
+    .feature-list li.disabled i { color: #CBD5E1; }
 </style>
 
-<!-- Header -->
-<div class="pricing-header">
+<div class="price-header">
     <div class="container">
         <h1 class="display-4 fw-bold mb-3">Affordable solutions for every Stokvel</h1>
         <p class="lead text-light mx-auto" style="max-width: 700px;">
-            At StokSafe, we believe that financial empowerment shouldn't break the bank. Choose the plan that best aligns with your goals and watch your stokvel grow.
+            At StokSafe, we believe that financial empowerment shouldn't break the bank. Choose the plan that best aligns with your goals.
         </p>
     </div>
 </div>
 
-<!-- Pricing Cards -->
 <div class="container py-5 my-4">
     <div class="row g-4 justify-content-center">
         
         <!-- Free Tier -->
         <div class="col-lg-4 col-md-6">
-            <div class="pricing-card p-4">
+            <div class="price-card p-4">
                 <h4 class="fw-bold mb-2">Starter</h4>
-                <p class="text-muted-premium small mb-4">Ideal for small stokvels just getting started with digital management.</p>
+                <p class="text-muted small mb-4">Ideal for small stokvels just getting started with digital management.</p>
                 <div class="mb-4">
                     <span class="price-tag">R 0</span>
                     <span class="price-period">/ month</span>
@@ -102,18 +44,17 @@
                     <li><i class="bi bi-check-circle-fill"></i> 50% Loan Cap Rule</li>
                     <li><i class="bi bi-check-circle-fill"></i> Digital POP Uploads</li>
                     <li class="disabled"><i class="bi bi-x-circle"></i> SMS & WhatsApp Notifications</li>
-                    <li class="disabled"><i class="bi bi-x-circle"></i> PDF Monthly Statements</li>
                 </ul>
-                <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-accent w-100 py-2 fw-bold">Start for Free</a>
+                <a href="/Auth/Register" class="btn btn-outline-dark w-100 py-2 fw-bold">Start for Free</a>
             </div>
         </div>
 
-        <!-- Growth Tier (Featured) -->
+        <!-- Growth Tier -->
         <div class="col-lg-4 col-md-6">
-            <div class="pricing-card featured p-4 shadow-lg">
+            <div class="price-card featured p-4">
                 <div class="featured-badge">Most Popular</div>
                 <h4 class="fw-bold mb-2">Growth</h4>
-                <p class="text-muted-premium small mb-4">Perfect for ambitious stokvels looking to scale and automate everything.</p>
+                <p class="text-muted small mb-4">Perfect for ambitious stokvels looking to scale and automate everything.</p>
                 <div class="mb-4">
                     <span class="price-tag">R 199</span>
                     <span class="price-period">/ month</span>
@@ -124,17 +65,16 @@
                     <li><i class="bi bi-check-circle-fill"></i> Email & SMS Notifications</li>
                     <li><i class="bi bi-check-circle-fill"></i> Automated PDF Statements</li>
                     <li><i class="bi bi-check-circle-fill"></i> WhatsApp Bot Support</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Admin Approval Links</li>
                 </ul>
-                <a asp-controller="Auth" asp-action="Register" class="btn btn-accent w-100 py-2 fw-bold shadow">Upgrade to Growth</a>
+                <a href="/Auth/Register" class="btn btn-accent w-100 py-2 fw-bold shadow">Upgrade to Growth</a>
             </div>
         </div>
 
         <!-- Enterprise Tier -->
         <div class="col-lg-4 col-md-6">
-            <div class="pricing-card p-4">
+            <div class="price-card p-4">
                 <h4 class="fw-bold mb-2">Enterprise</h4>
-                <p class="text-muted-premium small mb-4">Designed for large stokvels, multi-club managers, and visionary leaders.</p>
+                <p class="text-muted small mb-4">Designed for large stokvels, multi-club managers, and visionary leaders.</p>
                 <div class="mb-4">
                     <span class="price-tag">R 599</span>
                     <span class="price-period">/ month</span>
@@ -144,20 +84,9 @@
                     <li><i class="bi bi-check-circle-fill"></i> Everything in Growth</li>
                     <li><i class="bi bi-check-circle-fill"></i> Custom Role Permissions</li>
                     <li><i class="bi bi-check-circle-fill"></i> Dedicated Account Manager</li>
-                    <li><i class="bi bi-check-circle-fill"></i> API Access</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Custom Branding</li>
                 </ul>
-                <a href="mailto:sales@stoksafe.co.za" class="btn btn-outline-dark w-100 py-2 fw-bold">Contact Sales</a>
+                <a href="mailto:support@stoksafe.co.za" class="btn btn-outline-dark w-100 py-2 fw-bold">Contact Sales</a>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Call to Action -->
-<div class="bg-light py-5 text-center">
-    <div class="container py-3">
-        <h3 class="fw-bold mb-3">Still unsure which pricing tier is right?</h3>
-        <p class="text-muted-premium mb-4">Speak to a StokSafe Care Consultant today and let us tailor a plan that ensures you get the most value.</p>
-        <a href="mailto:support@stoksafe.co.za" class="btn btn-dark btn-lg px-5 rounded-pill">Get a Call Back</a>
     </div>
 </div>
