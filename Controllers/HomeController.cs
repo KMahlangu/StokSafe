@@ -1,3 +1,4 @@
+using StokSafe.Services.Interfaces;
 using StokSafe.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -78,5 +79,36 @@ public class HomeController : Controller
     public IActionResult Pricing()
     {
         return View();
+    }
+    
+    [HttpGet]
+    public IActionResult Contact()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Contact(string name, string email, string subject, string message, [FromServices] INotificationService notificationService)
+    {
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(message))
+        {
+            ViewBag.Error = "Please fill in all required fields.";
+            return View();
+        }
+
+        // Send the email to the Admin/Support
+        var emailBody = $@"
+            <h3>New Contact Us Message</h3>
+            <p><strong>From:</strong> {name} ({email})</p>
+            <p><strong>Subject:</strong> {subject}</p>
+            <p><strong>Message:</strong></p>
+            <p>{message}</p>
+        ";
+
+        await notificationService.SendEmailAsync("mosaprojects1@gmail.com", $"Contact Form: {subject}", emailBody);
+
+        TempData["Success"] = "Thank you! Your message has been sent successfully. We will get back to you shortly.";
+        return RedirectToAction(nameof(Contact));
     }
 }

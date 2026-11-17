@@ -1,0 +1,126 @@
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<style>
+    .contact-header {
+        background: linear-gradient(rgba(10, 37, 64, 0.9), rgba(10, 37, 64, 0.9)), url('https://images.unsplash.com/photo-1423666639041-f56000c27a9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+    .contact-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        padding: 40px;
+        border-top: 5px solid #00D09C;
+    }
+    .contact-info-card {
+        background: #0A2540;
+        color: white;
+        border-radius: 16px;
+        padding: 40px;
+        height: 100%;
+    }
+    .contact-info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 30px;
+    }
+    .contact-info-item i {
+        font-size: 1.5rem;
+        color: #00D09C;
+        margin-right: 15px;
+    }
+</style>
+
+<!-- Header -->
+<div class="contact-header">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Get in Touch</h1>
+        <p class="lead text-light mx-auto" style="max-width: 600px;">
+            Have a question about StokSafe? Need help setting up your stokvel? Our team is here to help.
+        </p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container py-5 my-4">
+    <div class="row g-4">
+        
+        <!-- Contact Info -->
+        <div class="col-lg-5">
+            <div class="contact-info-card">
+                <h3 class="fw-bold mb-4">Contact Information</h3>
+                <p class="text-white-50 mb-5">We are available Monday to Friday, 8:00 AM to 5:00 PM (SAST).</p>
+                
+                <div class="contact-info-item">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Our Office</h6>
+                        <p class="text-white-50 mb-0 small">123 Sandton Drive<br />Johannesburg, 2196<br />South Africa</p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <i class="bi bi-envelope-fill"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Email Us</h6>
+                        <p class="text-white-50 mb-0 small">support@stoksafe.co.za</p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <i class="bi bi-telephone-fill"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Call Us</h6>
+                        <p class="text-white-50 mb-0 small">+27 (0) 10 123 4567</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-7">
+            <div class="contact-card">
+                <h3 class="fw-bold mb-4 text-dark">Send us a Message</h3>
+                
+                @if (TempData["Success"] is string success)
+                {
+                    <div class="alert alert-success mb-4">@success</div>
+                }
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger mb-4">@ViewBag.Error</div>
+                }
+
+                <form asp-action="Contact" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Your Name</label>
+                            <input type="text" name="name" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email Address</label>
+                            <input type="email" name="email" class="form-control" required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Subject</label>
+                            <input type="text" name="subject" class="form-control" required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Message</label>
+                            <textarea name="message" class="form-control" rows="5" required></textarea>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-accent btn-lg px-5 shadow">Send Message</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
