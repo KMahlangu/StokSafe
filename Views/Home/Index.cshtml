@@ -1,64 +1,211 @@
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Digital Stokvel App";
 }
 
-<div class="container-fluid p-0">
-    <!-- HERO SECTION: Communicating Trust & Community -->
-    <div class="position-relative" style="background: url('https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover; height: 85vh;">
-        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(10, 37, 64, 0.85);"></div>
-        <div class="container position-relative h-100 d-flex align-items-center">
-            <div class="row">
-                <div class="col-md-8 text-white">
-                    <h1 class="display-3 fw-bold mb-4" style="letter-spacing: -1px;">Modernize your Stokvel.</h1>
-                    <p class="lead fs-4 mb-5 text-light" style="max-width: 600px;">
-                        Secure, transparent, and fully digital. Track contributions, manage loans, and automate fines without the WhatsApp chaos.
-                    </p>
-                    <div class="d-flex gap-3">
-                        <a asp-controller="Auth" asp-action="Register" class="btn btn-accent btn-lg px-5 py-3 fw-bold">Join a Club</a>
-                        <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-light btn-lg px-5 py-3 fw-bold">Login</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<style>
+    /* Custom Landing Page Styles */
+    .hero-section {
+        background: linear-gradient(rgba(10, 37, 64, 0.85), rgba(10, 37, 64, 0.95)), url('https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+        color: white;
+        padding: 120px 0;
+        text-align: center;
+    }
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        margin-bottom: 20px;
+    }
+    .hero-section p {
+        font-size: 1.25rem;
+        max-width: 700px;
+        margin: 0 auto 40px;
+        color: #E2E8F0;
+    }
+    .section-title {
+        text-align: center;
+        font-weight: 800;
+        font-size: 2.5rem;
+        color: #0A2540;
+        margin-bottom: 50px;
+        letter-spacing: -1px;
+    }
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(0, 208, 156, 0.1);
+        color: #00D09C;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    .step-circle {
+        width: 80px;
+        height: 80px;
+        background: #0A2540;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0 auto 20px;
+        box-shadow: 0 10px 20px rgba(10, 37, 64, 0.2);
+    }
+    .testimonial-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        height: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+</style>
 
-    <!-- FEATURES: Telling the functional story -->
-    <div class="container py-5 mt-4">
-        <div class="row text-center mb-5">
-            <div class="col-md-8 mx-auto">
-                <h2 class="fw-bold mb-3">Built for the way you save.</h2>
-                <p class="text-muted-premium fs-5">StokSafe handles the rules so you can focus on growing your wealth together.</p>
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <h1>Transforming the Stokvel Experience</h1>
+        <p>Join the digital revolution in community saving. Discover how easy, secure, and rewarding managing your stokvel can be with StokSafe.</p>
+        <a asp-controller="Auth" asp-action="Register" class="btn btn-accent btn-lg px-5 py-3 fw-bold rounded-pill shadow-lg">Sign Up Today</a>
+    </div>
+</div>
+
+<!-- Why StokSafe Section -->
+<div class="container py-5 mt-5">
+    <h2 class="section-title">Are you ready to revolutionise the way you save?</h2>
+    <p class="text-center text-muted-premium mb-5 fs-5">Say goodbye to financial stress and hello to the strength of community-driven financial empowerment.</p>
+    
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                <h5 class="fw-bold">Unified Platform</h5>
+                <p class="text-muted-premium small">Simplify, secure, and supercharge your stokvel with our all-in-one digital platform.</p>
             </div>
         </div>
-        
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="premium-card p-4 h-100 text-center">
-                    <div class="mb-3">
-                        <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+        <div class="col-md-3">
+            <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                <h5 class="fw-bold">Community-Driven</h5>
+                <p class="text-muted-premium small">Leverage cutting-edge technology that connects your stokvel to growth opportunities.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                <h5 class="fw-bold">Accelerated Growth</h5>
+                <p class="text-muted-premium small">Discover new avenues for savings and solutions, tailored to meet the aspirations of your group.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                <h5 class="fw-bold">Shared Ownership</h5>
+                <p class="text-muted-premium small">Own more than just a digital savings account. Gain access to income-generating assets.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="section-title">Everything you need to manage your Stokvel</h2>
+        <div class="row g-4 mt-2">
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <div class="feature-icon me-3 flex-shrink-0"><i class="bi bi-shield-check"></i></div>
+                    <div>
+                        <h5 class="fw-bold">Comprehensive Security</h5>
+                        <p class="text-muted-premium">We take the safety of your savings seriously. All data is encrypted and protected by industry-standard security protocols.</p>
                     </div>
-                    <h4 class="fw-bold">Automated Savings</h4>
-                    <p class="text-muted-premium">Members contribute weekly. Upload proof of payment and the Treasurer approves it instantly.</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="premium-card p-4 h-100 text-center">
-                    <div class="mb-3">
-                        <img src="https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <div class="feature-icon me-3 flex-shrink-0"><i class="bi bi-eye"></i></div>
+                    <div>
+                        <h5 class="fw-bold">Transparency and Accountability</h5>
+                        <p class="text-muted-premium">Our platform ensures complete transparency in all transactions. See all the money coming in and going out of your stokvel.</p>
                     </div>
-                    <h4 class="fw-bold">Smart Loans</h4>
-                    <p class="text-muted-premium">Borrow up to 50% of your contributions. The system calculates due dates and penalties automatically.</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="premium-card p-4 h-100 text-center">
-                    <div class="mb-3">
-                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <div class="feature-icon me-3 flex-shrink-0"><i class="bi bi-mortarboard"></i></div>
+                    <div>
+                        <h5 class="fw-bold">Education and Support</h5>
+                        <p class="text-muted-premium">We believe in empowering our members with the knowledge and skills they need to succeed financially.</p>
                     </div>
-                    <h4 class="fw-bold">Digital Statements</h4>
-                    <p class="text-muted-premium">Receive monthly PDF statements via email. Complete transparency for every member, anytime.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex">
+                    <div class="feature-icon me-3 flex-shrink-0"><i class="bi bi-phone"></i></div>
+                    <div>
+                        <h5 class="fw-bold">Convenience</h5>
+                        <p class="text-muted-premium">Our platform ensures seamless stokvel contributions at your fingertips, 24/7 from anywhere in South Africa.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- How it Works -->
+<div class="container py-5 text-center">
+    <h2 class="section-title">It's as easy as 1, 2, 3</h2>
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="step-circle">1</div>
+            <h5 class="fw-bold">Create your Profile</h5>
+            <p class="text-muted-premium">Register your details on our secure platform.</p>
+        </div>
+        <div class="col-md-4">
+            <div class="step-circle">2</div>
+            <h5 class="fw-bold">Join your Stokvel</h5>
+            <p class="text-muted-premium">Use your invite or select your club to join your community.</p>
+        </div>
+        <div class="col-md-4">
+            <div class="step-circle">3</div>
+            <h5 class="fw-bold">Start Saving Today</h5>
+            <p class="text-muted-premium">Track contributions, take loans, and watch your wealth grow.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials -->
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="section-title">Meet the stokvels that transformed their communities</h2>
+        <div class="row g-4 mt-2">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="fst-italic text-muted">"We've managed to raise over R15m with our members using StokSafe and paid out well over R5m to our members."</p>
+                    <h6 class="fw-bold mt-4 mb-0">Silindile Leseyane</h6>
+                    <small class="text-muted-premium">Sakhisizwe Property Stokvel</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="fst-italic text-muted">"Our stokvel bought two fast food chain franchises in one year. StokSafe made it possible for all members to keep track of our goals."</p>
+                    <h6 class="fw-bold mt-4 mb-0">Selebogo Molefe</h6>
+                    <small class="text-muted-premium">THUDmoney Franchise Stokvel</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="fst-italic text-muted">"I was struggling to keep track of fines and loans. StokSafe resolved all our admin headaches instantly. Talk about efficient service."</p>
+                    <h6 class="fw-bold mt-4 mb-0">Nelisiwe Shoyisa</h6>
+                    <small class="text-muted-premium">South Africa</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Final Call to Action -->
+<div class="container py-5 text-center">
+    <h2 class="fw-bold mb-4">Ready to take control of your Stokvel?</h2>
+    <a asp-controller="Auth" asp-action="Register" class="btn btn-accent btn-lg px-5 py-3 rounded-pill shadow">Create Your Account Now</a>
 </div>
