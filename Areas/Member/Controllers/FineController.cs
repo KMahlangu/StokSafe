@@ -15,17 +15,20 @@ public class FineController : Controller
 {
     private readonly IFineService _fineService;
     private readonly IOzowPaymentService _ozowService;
+    private readonly INotificationService _notificationService;
     private readonly ApplicationDbContext _db;
     private readonly UserManager<User> _userManager;
 
     public FineController(
         IFineService fineService,
         IOzowPaymentService ozowService,
+        INotificationService notificationService,
         ApplicationDbContext db,
         UserManager<User> userManager)
     {
         _fineService = fineService;
         _ozowService = ozowService;
+        _notificationService = notificationService;
         _db = db;
         _userManager = userManager;
     }
@@ -53,7 +56,6 @@ public class FineController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Pay(int id, decimal amount, string? reference)
     {
-        // Ozow temporarily disabled. Redirecting to details page for POP upload.
         TempData["Success"] = "Please upload your Proof of Payment below to complete this transaction.";
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -97,6 +99,12 @@ public class FineController : Controller
             Status = "Pending"
         });
         await _db.SaveChangesAsync();
+
+        // Send Transaction Attempt Notifications
+        var msg = $"StokSafe: You uploaded a Proof of Payment for Fine #{id}. Awaiting Treasurer approval.";
+        await _notificationService.SendEmailAsync(user.Email!, "POP Uploaded", $"<p>{msg}</p>");
+        if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
+            await _notificationService.SendSmsAsync(user.PhoneNumber, msg);
 
         TempData["Success"] = "Proof of Payment uploaded! Awaiting Treasurer approval.";
         return RedirectToAction(nameof(Details), new { id });

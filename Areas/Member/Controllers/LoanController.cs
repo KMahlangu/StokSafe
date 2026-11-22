@@ -79,35 +79,10 @@ public class LoanController : Controller
         {
             var loan = await _loanService.ApplyAsync(member.Id, principal, termMonths, reason);
 
-            // =========================================================
-            // SEND NOTIFICATIONS
-            // =========================================================
-            var emailSubject = $"Loan Application Received (Ref: LN-{loan.Id:D5})";
-            var emailBody = $@"
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;'>
-                    <div style='background-color: #0d6efd; color: white; padding: 20px; text-align: center;'>
-                        <h2>StokSafe</h2>
-                    </div>
-                    <div style='padding: 20px;'>
-                        <h3>Hello {user.Name},</h3>
-                        <p>Your loan application has been successfully submitted and is currently pending review.</p>
-                        <table style='width: 100%; border-collapse: collapse; margin-top: 15px;'>
-                            <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Reference:</strong></td><td style='padding: 8px; border-bottom: 1px solid #eee;'>LN-{loan.Id:D5}</td></tr>
-                            <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Amount to Repay:</strong></td><td style='padding: 8px; border-bottom: 1px solid #eee;'>R {loan.TotalAmountDue:N2} <small>(Includes 50% interest)</small></td></tr>
-                            <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Term:</strong></td><td style='padding: 8px; border-bottom: 1px solid #eee;'>4 Weeks</td></tr>
-                        </table>
-                        <p style='margin-top: 20px;'>The committee will review your application shortly.</p>
-                    </div>
-                </div>";
-
-            // 1. Send Email
-            await _notificationService.SendEmailAsync(user.Email!, emailSubject, emailBody);
-
-            // 2. Send SMS (Ensure phone number is not null)
+            // Send SMS Notification for Loan Application
             if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
             {
-                var smsMessage = $"StokSafe: Your loan application of R{principal:N2} (Ref: LN-{loan.Id:D5}) has been received.";
-                await _notificationService.SendSmsAsync(user.PhoneNumber, smsMessage);
+                await _notificationService.SendSmsAsync(user.PhoneNumber, $"StokSafe: Your loan application (LN-{loan.Id:D5}) for R{principal:N2} has been received.");
             }
 
             TempData["Success"] = $"Loan application submitted (Ref: LN-{loan.Id:D5}). Notifications sent!";

@@ -15,17 +15,20 @@ public class ContributionController : Controller
 {
     private readonly IContributionService _contributionService;
     private readonly IOzowPaymentService _ozowService;
+    private readonly INotificationService _notificationService;
     private readonly ApplicationDbContext _db;
     private readonly UserManager<User> _userManager;
 
     public ContributionController(
         IContributionService contributionService,
         IOzowPaymentService ozowService,
+        INotificationService notificationService,
         ApplicationDbContext db,
         UserManager<User> userManager)
     {
         _contributionService = contributionService;
         _ozowService = ozowService;
+        _notificationService = notificationService;
         _db = db;
         _userManager = userManager;
     }
@@ -64,31 +67,21 @@ public class ContributionController : Controller
             .OrderByDescending(c => c.ContributionDate)
             .FirstOrDefaultAsync();
 
-        if (contrib is null)
+        if (contrib is null) 
         {
             TempData["Error"] = "No pending contribution found.";
             return RedirectToAction(nameof(Index));
         }
 
-        // Ozow temporarily disabled. Redirecting to details page for POP upload.
         TempData["Success"] = "Please upload your Proof of Payment below to complete this transaction.";
         return RedirectToAction(nameof(Details), new { id = contrib.Id });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Pay(int id, decimal amount, string? reference)
-    {
-        // Ozow temporarily disabled. Redirecting to details page for POP upload.
-        TempData["Success"] = "Please upload your Proof of Payment below to complete this transaction.";
-        return RedirectToAction(nameof(Details), new { id });
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> UploadPop(int id, IFormFile file)
     {
-        if (file == null || file.Length == 0)
+        if (file == null || file.Length == 0) 
         {
             TempData["Error"] = "Please select a file.";
             return RedirectToAction(nameof(Details), new { id });
@@ -113,7 +106,7 @@ public class ContributionController : Controller
         }
 
         var user = await _userManager.GetUserAsync(User);
-
+        
         _db.ProofOfPayments.Add(new ProofOfPayment
         {
             ContributionId = id,
@@ -123,6 +116,12 @@ public class ContributionController : Controller
             Status = "Pending"
         });
         await _db.SaveChangesAsync();
+
+        // Send Transaction Attempt Notifications
+        var msg = $"StokSafe: You uploaded a Proof of Payment for Contribution #{id}. Awaiting Treasurer approval.";
+        await _notificationService.SendEmailAsync(user.Email!, "POP Uploaded", $"<p>{msg}</p>");
+        if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
+            await _notificationService.SendSmsAsync(user.PhoneNumber, msg);
 
         TempData["Success"] = "Proof of Payment uploaded! Awaiting Treasurer approval.";
         return RedirectToAction(nameof(Details), new { id });
@@ -140,14 +139,6 @@ public class ContributionController : Controller
             await _db.SaveChangesAsync();
             TempData["Success"] = "Payment simulated successfully (Dev Bypass)!";
         }
-        return RedirectToAction(nameof(Index));
-    }
-    
-    // GET: /Member/Contribution/PayCurrentWeek
-    [HttpGet]
-    public IActionResult PayCurrentWeek()
-    {
-        TempData["Error"] = "Please select a specific pending contribution from the list below to make a payment.";
         return RedirectToAction(nameof(Index));
     }
 }
