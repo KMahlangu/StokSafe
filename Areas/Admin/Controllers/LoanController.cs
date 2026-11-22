@@ -63,15 +63,10 @@ public class LoanController : Controller
     // POST: /Admin/Loan/Approve
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Approve(int id, decimal interestRate)
+    public async Task<IActionResult> Approve(int id)
     {
-        if (interestRate < 0)
-        {
-            TempData["Error"] = "Interest rate cannot be negative.";
-            return RedirectToAction(nameof(Details), new { id });
-        }
-
-        var ok = await _loanService.ApproveAsync(id, interestRate);
+        // The LoanService automatically applies the 50% interest rule.
+        var ok = await _loanService.ApproveAsync(id, 50m); 
 
         if (ok)
         {

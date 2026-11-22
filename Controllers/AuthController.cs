@@ -176,10 +176,7 @@ public class AuthController : Controller
             }
             await _db.SaveChangesAsync();
 
-            // 3. Send OTP
-            await SendOtpAsync(user);
-
-            // 4. Notify Admin (Optional email wrapped in try/catch)
+            // 3. Notify Admin (Optional email wrapped in try/catch)
             try
             {
                 await _notificationService.SendEmailAsync(
@@ -190,6 +187,17 @@ public class AuthController : Controller
             }
             catch { /* Ignore email failure */ }
 
+            // 4. CHECK ROLE: If Admin, log them in immediately and send to Admin Dashboard
+            if (model.Role == StokSafe.Models.Enums.UserRole.Admin || model.Role == StokSafe.Models.Enums.UserRole.Head)
+            {
+                user.IsVerified = true; 
+                await _userManager.UpdateAsync(user);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            }
+
+            // 5. For regular members, send OTP and redirect to OTP page
+            await SendOtpAsync(user);
             return RedirectToAction("VerifyOtp", new { email = user.Email });
         }
 
