@@ -27,49 +27,26 @@ public class AuthController : Controller
         _db = db;
     }
 
-    // ==========================================
-    // LOGIN
-    // ==========================================
     [HttpGet]
-    public IActionResult Login()
-    {
-        return View();
-    }
+    public IActionResult Login() => View();
 
     [HttpPost]
     public async Task<IActionResult> Login(string email, string password)
     {
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-        {
-            ViewBag.Error = "Please enter your email and password.";
-            return View();
-        }
-
         var user = await _userManager.FindByEmailAsync(email);
-        if (user == null || !user.IsActive)
-        {
-            ViewBag.Error = "Invalid login or account inactive.";
-            return View();
-        }
+        if (user == null || !user.IsActive) { ViewBag.Error = "Invalid login or account inactive."; return View(); }
 
-        // If they haven't verified their OTP, send a new one and redirect to the OTP page
         if (!user.IsVerified)
         {
             await SendOtpAsync(user);
             return RedirectToAction("VerifyOtp", new { email = user.Email });
         }
 
-        var result = await _signInManager.PasswordSignInAsync(user, password, isPersistent: false, lockoutOnFailure: false);
-
-        if (result != null && result.Succeeded)
+        var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+        if (result.Succeeded)
         {
-            user.LastLoginAt = DateTime.UtcNow;
-            await _userManager.UpdateAsync(user);
-
-            // Route based on role
             if (user.Role == StokSafe.Models.Enums.UserRole.Admin || user.Role == StokSafe.Models.Enums.UserRole.Head)
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
-
             return RedirectToAction("Index", "Dashboard", new { area = "Member" });
         }
 
@@ -77,9 +54,6 @@ public class AuthController : Controller
         return View();
     }
 
-    // ==========================================
-    // REGISTER
-    // ==========================================
     [HttpGet]
     public async Task<IActionResult> Register()
     {
@@ -116,10 +90,10 @@ public class AuthController : Controller
             Name = model.Name,
             Surname = model.Surname,
             PhoneNumber = model.PhoneNumber,
-            IsVerified = false, // Require OTP
+            IsVerified = false,
             IsActive = true,
             EmailConfirmed = true,
-            Role = model.Role // Store the role on the User object
+            Role = model.Role
         };
 
         Microsoft.AspNetCore.Identity.IdentityResult result;
@@ -127,27 +101,18 @@ public class AuthController : Controller
         {
             result = await _userManager.CreateAsync(user, model.Password);
         }
-        catch (DbUpdateException ex)
+        catch (DbUpdateException)
         {
-            // Catch the duplicate email/username database error
-            ModelState.AddModelError("", "This email address is already registered. Please login instead.");
-            
+            ModelState.AddModelError("", "This email address is already registered.");
             var clubsList = await _db.Clubs.ToListAsync();
-            model.AvailableClubs = clubsList.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-            {
-                Value = c.Id.ToString(),
-                Text = c.Name
-            }).ToList();
-            
+            model.AvailableClubs = clubsList.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
             return View(model);
         }
 
         if (result != null && result.Succeeded)
         {
-            // 1. Assign Identity Role
             await _userManager.AddToRoleAsync(user, model.Role.ToString());
 
-            // 2. Create ClubMember Link
             if (model.Role == StokSafe.Models.Enums.UserRole.Admin || model.Role == StokSafe.Models.Enums.UserRole.Head)
             {
                 var newClub = new Club { Name = $"{user.Name}'s Stokvel", CreatedAt = DateTime.UtcNow };
@@ -176,55 +141,36 @@ public class AuthController : Controller
             }
             await _db.SaveChangesAsync();
 
-            // 3. Notify Admin (Optional email wrapped in try/catch)
             try
             {
-                await _notificationService.SendEmailAsync(
-                    "mosaprojects1@gmail.com",
-                    "StokSafe - New Member Pending Approval",
-                    $"<h3>New Registration!</h3><p>{user.Name} {user.Surname} ({user.Email}) has registered as a {user.Role}.</p>"
-                );
+                await _notificationService.SendEmailAsync("mosaprojects1@gmail.com", "New Registration", $"<p>{user.Name} has registered.</p>");
             }
-            catch { /* Ignore email failure */ }
+            catch { }
 
-            // 4. CHECK ROLE: If Admin, log them in immediately and send to Admin Dashboard
+            // CHECK ROLE AND ROUTE IMMEDIATELY FOR ADMIN
             if (model.Role == StokSafe.Models.Enums.UserRole.Admin || model.Role == StokSafe.Models.Enums.UserRole.Head)
             {
-                user.IsVerified = true; 
+                user.IsVerified = true;
                 await _userManager.UpdateAsync(user);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
             }
 
-            // 5. For regular members, send OTP and redirect to OTP page
             await SendOtpAsync(user);
             return RedirectToAction("VerifyOtp", new { email = user.Email });
         }
 
-        foreach (var error in result.Errors)
+        if (result != null)
         {
-            ModelState.AddModelError("", error.Description);
+            foreach (var error in result.Errors) ModelState.AddModelError("", error.Description);
         }
-
         var availableClubs = await _db.Clubs.ToListAsync();
-        model.AvailableClubs = availableClubs.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-        {
-            Value = c.Id.ToString(),
-            Text = c.Name
-        }).ToList();
-
+        model.AvailableClubs = availableClubs.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
         return View(model);
     }
 
-    // ==========================================
-    // OTP VERIFICATION
-    // ==========================================
     [HttpGet]
-    public IActionResult VerifyOtp(string email)
-    {
-        ViewBag.Email = email;
-        return View();
-    }
+    public IActionResult VerifyOtp(string email) { ViewBag.Email = email; return View(); }
 
     [HttpPost]
     public async Task<IActionResult> VerifyOtp(string email, string otpCode)
@@ -234,47 +180,28 @@ public class AuthController : Controller
 
         if (user.OtpCode == otpCode && user.OtpExpiry > DateTime.UtcNow)
         {
-            user.IsVerified = true;
-            user.OtpCode = null;
-            user.OtpExpiry = null;
+            user.IsVerified = true; user.OtpCode = null; user.OtpExpiry = null;
             await _userManager.UpdateAsync(user);
-
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            // Route based on role
             if (user.Role == StokSafe.Models.Enums.UserRole.Admin || user.Role == StokSafe.Models.Enums.UserRole.Head)
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
-
             return RedirectToAction("Index", "Dashboard", new { area = "Member" });
         }
 
-        ViewBag.Error = "Invalid or expired OTP. Please try again.";
-        ViewBag.Email = email;
-        return View();
+        ViewBag.Error = "Invalid or expired OTP."; ViewBag.Email = email; return View();
     }
 
-    // ==========================================
-    // HELPER: SEND OTP
-    // ==========================================
-    private async Task SendOtpAsync(User user)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendOtp(string email)
     {
-        var otp = new Random().Next(100000, 999999).ToString();
-        user.OtpCode = otp;
-        user.OtpExpiry = DateTime.UtcNow.AddMinutes(5);
-        await _userManager.UpdateAsync(user);
-
-        await _notificationService.SendEmailAsync(user.Email!, "StokSafe - Verify Your Account",
-            $"<h3>Welcome to StokSafe!</h3><p>Your One-Time Password (OTP) is: <strong style='font-size:24px;'>{otp}</strong></p>");
-
-        if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
-        {
-            await _notificationService.SendSmsAsync(user.PhoneNumber, $"StokSafe OTP: {otp}");
-        }
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user != null) await SendOtpAsync(user);
+        TempData["Success"] = "A new OTP has been sent.";
+        return RedirectToAction(nameof(VerifyOtp), new { email = email });
     }
 
-    // ==========================================
-    // LOGOUT
-    // ==========================================
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
@@ -282,17 +209,16 @@ public class AuthController : Controller
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home", new { area = "" });
     }
-    
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ResendOtp(string email)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user == null) return NotFound();
 
-        await SendOtpAsync(user);
-        
-        TempData["Success"] = "A new OTP has been sent to your email and phone.";
-        return RedirectToAction(nameof(VerifyOtp), new { email = email });
+    private async Task SendOtpAsync(User user)
+    {
+        var otp = new Random().Next(100000, 999999).ToString();
+        user.OtpCode = otp;
+        user.OtpExpiry = DateTime.UtcNow.AddMinutes(5);
+        await _userManager.UpdateAsync(user);
+
+        await _notificationService.SendEmailAsync(user.Email!, "StokSafe - Verify Account", $"<p>Your OTP is: <strong>{otp}</strong></p>");
+        if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
+            await _notificationService.SendSmsAsync(user.PhoneNumber, $"StokSafe OTP: {otp}");
     }
 }
