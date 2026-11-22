@@ -61,7 +61,7 @@ public class AuthController : Controller
 
         var result = await _signInManager.PasswordSignInAsync(user, password, isPersistent: false, lockoutOnFailure: false);
 
-        if (result.Succeeded)
+        if (result != null && result.Succeeded)
         {
             user.LastLoginAt = DateTime.UtcNow;
             await _userManager.UpdateAsync(user);
@@ -122,9 +122,27 @@ public class AuthController : Controller
             Role = model.Role // Store the role on the User object
         };
 
-        var result = await _userManager.CreateAsync(user, model.Password);
+        Microsoft.AspNetCore.Identity.IdentityResult result;
+        try
+        {
+            result = await _userManager.CreateAsync(user, model.Password);
+        }
+        catch (DbUpdateException ex)
+        {
+            // Catch the duplicate email/username database error
+            ModelState.AddModelError("", "This email address is already registered. Please login instead.");
+            
+            var clubsList = await _db.Clubs.ToListAsync();
+            model.AvailableClubs = clubsList.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+            
+            return View(model);
+        }
 
-        if (result.Succeeded)
+        if (result != null && result.Succeeded)
         {
             // 1. Assign Identity Role
             await _userManager.AddToRoleAsync(user, model.Role.ToString());
