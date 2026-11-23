@@ -52,6 +52,15 @@ public class ContributionController : Controller
         return View(contribution);
     }
 
+        
+    // GET: /Member/Contribution/PayCurrentWeek
+    [HttpGet]
+    public IActionResult PayCurrentWeek()
+    {
+        TempData["Error"] = "Please select a specific contribution from the list to make a payment.";
+        return RedirectToAction(nameof(Index));
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PayCurrentWeek(decimal amount, string? reference)

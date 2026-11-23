@@ -6,7 +6,7 @@
 
 <div class="container mt-4 mb-5">
 
-        <!-- Hero Section -->
+    <!-- Hero Section -->
     <div class="premium-card p-4 mb-4 position-relative overflow-hidden" style="background: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;">
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(10, 37, 64, 0.95) 0%, rgba(26, 59, 92, 0.8) 100%);"></div>
         <div class="position-relative" style="z-index: 1; color: white;">
@@ -19,12 +19,23 @@
             <p class="text-white-50 mb-0 mt-3"><i class="bi bi-info-circle"></i> Next contribution due this Sunday at 15:00</p>
         </div>
     </div>
+
+    <!-- Alert for Fines -->
+    @if (Model.HasUnpaidLateFine)
+    {
+        <div class="alert alert-warning border-0 premium-card mb-4 d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+            <div>
+                <strong>Action Required:</strong> You have an unpaid late fine of R @Model.LateFineBalance.ToString("N2").
+                <a asp-area="Member" asp-controller="Fine" asp-action="Index" class="alert-link">Resolve Now &rarr;</a>
+            </div>
+        </div>
     }
 
-    <!-- Quick Actions -->
+    <!-- Quick Actions (FIXED TO USE GET LINKS) -->
     <div class="row g-3 mb-4">
         <div class="col-4">
-            <a asp-area="Member" asp-controller="Contribution" asp-action="Index" class="text-decoration-none">
+            <a href="/Member/Contribution" class="text-decoration-none">
                 <div class="premium-card p-3 text-center h-100">
                     <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 48px; height: 48px;">
                         <i class="bi bi-wallet2 fs-5"></i>
@@ -34,7 +45,7 @@
             </a>
         </div>
         <div class="col-4">
-            <a asp-area="Member" asp-controller="Loan" asp-action="Apply" class="text-decoration-none">
+            <a href="/Member/Loan/Apply" class="text-decoration-none">
                 <div class="premium-card p-3 text-center h-100">
                     <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 48px; height: 48px;">
                         <i class="bi bi-cash-stack fs-5"></i>
@@ -44,7 +55,7 @@
             </a>
         </div>
         <div class="col-4">
-            <a asp-area="Member" asp-controller="Statement" asp-action="Index" class="text-decoration-none">
+            <a href="/Member/Statement" class="text-decoration-none">
                 <div class="premium-card p-3 text-center h-100">
                     <div class="bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 48px; height: 48px;">
                         <i class="bi bi-file-earmark-text fs-5"></i>
