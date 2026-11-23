@@ -141,4 +141,13 @@ public class ContributionController : Controller
         }
         return RedirectToAction(nameof(Index));
     }
+    
+    // GET: /Member/Contribution/Pay
+    [HttpGet]
+    public IActionResult Pay()
+    {
+        TempData["Error"] = "Please select a specific contribution from the list to make a payment.";
+        return RedirectToAction(nameof(Index));
+    }
+
 }
