@@ -63,22 +63,11 @@ public class ContributionController : Controller
 
     // GET: /Member/Contribution/Pay
     // This catches the Dashboard button if it sends a GET request
-    [HttpGet]
-    public IActionResult Pay()
-    {
-        TempData["Error"] = "Please select a specific contribution from the list below.";
-        return RedirectToAction(nameof(Index));
-    }
+    
 
     // POST: /Member/Contribution/Pay
     // This catches the Dashboard button if it sends a POST request
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Pay(string dummy = "")
-    {
-        TempData["Error"] = "Please select a specific contribution from the list below.";
-        return RedirectToAction(nameof(Index));
-    }
+    
 
     // POST: /Member/Contribution/UploadPop
     [HttpPost]
