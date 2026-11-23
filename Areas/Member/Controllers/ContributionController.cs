@@ -33,6 +33,7 @@ public class ContributionController : Controller
         _userManager = userManager;
     }
 
+    // GET: /Member/Contribution
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -45,6 +46,7 @@ public class ContributionController : Controller
         return View(contributions);
     }
 
+    // GET: /Member/Contribution/Details/5
     public async Task<IActionResult> Details(int id)
     {
         var contribution = await _contributionService.GetContributionAsync(id);
@@ -52,40 +54,26 @@ public class ContributionController : Controller
         return View(contribution);
     }
 
-        
-    // GET: /Member/Contribution/PayCurrentWeek
+    // GET: /Member/Contribution/Pay
+    // This catches the Dashboard button if it sends a GET request
     [HttpGet]
-    public IActionResult PayCurrentWeek()
+    public IActionResult Pay()
     {
-        TempData["Error"] = "Please select a specific contribution from the list to make a payment.";
+        TempData["Error"] = "Please select a specific contribution from the list below.";
         return RedirectToAction(nameof(Index));
     }
 
+    // POST: /Member/Contribution/Pay
+    // This catches the Dashboard button if it sends a POST request
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> PayCurrentWeek(decimal amount, string? reference)
+    public IActionResult Pay(string dummy = "")
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null) return RedirectToAction("Login", "Auth", new { area = "" });
-
-        var member = await _db.ClubMembers.FirstOrDefaultAsync(m => m.UserId == user.Id);
-        if (member is null) return NotFound("Member not found.");
-
-        var contrib = await _db.Contributions
-            .Where(c => c.ClubMemberId == member.Id && c.Status == ContributionStatus.Pending)
-            .OrderByDescending(c => c.ContributionDate)
-            .FirstOrDefaultAsync();
-
-        if (contrib is null) 
-        {
-            TempData["Error"] = "No pending contribution found.";
-            return RedirectToAction(nameof(Index));
-        }
-
-        TempData["Success"] = "Please upload your Proof of Payment below to complete this transaction.";
-        return RedirectToAction(nameof(Details), new { id = contrib.Id });
+        TempData["Error"] = "Please select a specific contribution from the list below.";
+        return RedirectToAction(nameof(Index));
     }
 
+    // POST: /Member/Contribution/UploadPop
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UploadPop(int id, IFormFile file)
@@ -126,7 +114,6 @@ public class ContributionController : Controller
         });
         await _db.SaveChangesAsync();
 
-        // Send Transaction Attempt Notifications
         var msg = $"StokSafe: You uploaded a Proof of Payment for Contribution #{id}. Awaiting Treasurer approval.";
         await _notificationService.SendEmailAsync(user.Email!, "POP Uploaded", $"<p>{msg}</p>");
         if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
@@ -136,6 +123,7 @@ public class ContributionController : Controller
         return RedirectToAction(nameof(Details), new { id });
     }
 
+    // POST: /Member/Contribution/DevPayBypass
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DevPayBypass(int id)
@@ -150,13 +138,4 @@ public class ContributionController : Controller
         }
         return RedirectToAction(nameof(Index));
     }
-    
-    // GET: /Member/Contribution/Pay
-    [HttpGet]
-    public IActionResult Pay()
-    {
-        TempData["Error"] = "Please select a specific contribution from the list to make a payment.";
-        return RedirectToAction(nameof(Index));
-    }
-
 }
