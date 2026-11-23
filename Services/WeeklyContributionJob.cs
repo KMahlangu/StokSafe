@@ -20,7 +20,6 @@ public class WeeklyContributionJob : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await Task.Delay(TimeSpan.FromSeconds(15), stoppingToken);
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -35,19 +34,14 @@ public class WeeklyContributionJob : BackgroundService
         }
     }
 
-    public async Task RunOnceAsync(CancellationToken ct = default) => await RunCycleAsync(ct);
-
     private async Task RunCycleAsync(CancellationToken ct)
     {
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         await GenerateWeeklyContributionsAsync(db, ct);
+        await ApplyMissedContributionFinesAsync(db, ct);
         await ApplyLoanPenaltiesAsync(db, ct);
-        
-        // DISABLED FOR DEVELOPMENT
-        // await ApplyMissedContributionFinesAsync(db, ct);
-        // await EscalateUnpaidFinesAsync(db, ct);
     }
 
     private async Task GenerateWeeklyContributionsAsync(ApplicationDbContext db, CancellationToken ct)
@@ -55,7 +49,7 @@ public class WeeklyContributionJob : BackgroundService
         var now = DateTime.UtcNow;
         var weekStart = now.Date.AddDays(-((int)now.DayOfWeek == 0 ? 6 : (int)now.DayOfWeek - 1));
         var weekNumber = ISOWeek.GetWeekOfYear(now);
-        var dueDate = weekStart.AddDays(6).AddHours(15);
+        var dueDate = weekStart.AddDays(6).AddHours(15); // Sunday 15:00
 
         var alreadyGenerated = await db.Contributions.AnyAsync(c => c.WeekNumber == weekNumber && c.ContributionDate.Year == weekStart.Year, ct);
         if (alreadyGenerated) return;
@@ -79,31 +73,65 @@ public class WeeklyContributionJob : BackgroundService
         }
         await db.SaveChangesAsync(ct);
     }
-    
-    private async Task ApplyLoanPenaltiesAsync(ApplicationDbContext db, CancellationToken ct)
+
+    private async Task ApplyMissedContributionFinesAsync(ApplicationDbContext db, CancellationToken ct)
     {
         var now = DateTime.UtcNow;
         
-        // Find Active loans past their due date
+        // Find Pending contributions whose DueDate has passed
+        var overdueContributions = await db.Contributions
+            .Where(c => c.Status == ContributionStatus.Pending && c.DueDate < now)
+            .ToListAsync(ct);
+
+        foreach (var contribution in overdueContributions)
+        {
+            var fineExists = await db.Fines.AnyAsync(f => f.ContributionId == contribution.Id, ct);
+            if (fineExists) continue;
+
+            var fineAmount = Fine.GetFineAmount(FineType.NoBanking); // Should be R50
+
+            db.Fines.Add(new Fine
+            {
+                ClubMemberId = contribution.ClubMemberId,
+                ClubId = contribution.ClubId,
+                ContributionId = contribution.Id,
+                FineType = FineType.NoBanking,
+                OriginalAmount = fineAmount,
+                CurrentAmount = fineAmount,
+                PaidAmount = 0m,
+                Balance = fineAmount,
+                DueDate = now.AddDays(7),
+                Status = FineStatus.Pending,
+                EscalationLevel = FineEscalationLevel.Level1,
+                WeeksOverdue = 1,
+                Description = $"Missed weekly contribution for week {contribution.WeekNumber}.",
+                Reference = $"LATE-WK{contribution.WeekNumber}-{contribution.ClubMemberId}",
+                IsCompulsory = true,
+                CreatedAt = now
+            });
+
+            contribution.Status = ContributionStatus.Failed;
+        }
+        await db.SaveChangesAsync(ct);
+    }
+
+    private async Task ApplyLoanPenaltiesAsync(ApplicationDbContext db, CancellationToken ct)
+    {
+        var now = DateTime.UtcNow;
         var overdueLoans = await db.Loans
             .Where(l => l.Status == LoanStatus.Active && l.DueDate < now)
             .ToListAsync(ct);
 
         foreach (var loan in overdueLoans)
         {
-            // Calculate how many weeks overdue (at least 1 if it just passed)
             var weeksPastDue = (int)Math.Ceiling((now - loan.DueDate!.Value).TotalDays / 7.0);
             
-            // If it's a new week overdue that we haven't penalized yet
             if (weeksPastDue > loan.WeeksOverdue)
             {
-                // Double the balance
                 loan.OutstandingBalance *= 2;
                 loan.TotalAmountDue = loan.OutstandingBalance;
                 loan.WeeksOverdue = weeksPastDue;
-                loan.Status = LoanStatus.Overdue; // Mark as overdue
-                
-                // Update the due date to push it out another 7 days for the next check
+                loan.Status = LoanStatus.Overdue;
                 loan.DueDate = loan.DueDate.Value.AddDays(7 * (weeksPastDue - loan.WeeksOverdue)); 
             }
         }

@@ -42,8 +42,15 @@ public class ContributionController : Controller
         var member = await _db.ClubMembers.FirstOrDefaultAsync(m => m.UserId == user.Id);
         if (member is null) return View(Enumerable.Empty<Contribution>());
 
-        var contributions = await _contributionService.GetMemberContributionsAsync(member.Id);
-        return View(contributions);
+        var now = DateTime.UtcNow;
+        var currentWeekNumber = System.Globalization.ISOWeek.GetWeekOfYear(now);
+
+        // ONLY fetch the contribution for the current week
+        var currentContribution = await _db.Contributions
+            .Where(c => c.ClubMemberId == member.Id && c.WeekNumber == currentWeekNumber)
+            .ToListAsync();
+
+        return View(currentContribution);
     }
 
     // GET: /Member/Contribution/Details/5
