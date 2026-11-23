@@ -4,26 +4,20 @@
 }
 
 <div class="container mt-4 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-0">Weekly Contribution</h2>
-            <p class="text-muted-premium">Your current week's status.</p>
-        </div>
-    </div>
+    <h2 class="fw-bold mb-4">Weekly Contribution</h2>
 
     @if (TempData["Success"] is string success)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm">@success<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success">@success</div>
     }
     @if (TempData["Error"] is string error)
     {
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm">@error<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger">@error</div>
     }
 
     @if (!Model.Any())
     {
         <div class="premium-card p-5 text-center">
-            <i class="bi bi-check-circle-fill text-success mb-3" style="font-size: 3rem;"></i>
             <h4 class="fw-bold">You are all caught up!</h4>
             <p class="text-muted-premium">There are no contributions due for the current week.</p>
         </div>
@@ -34,21 +28,17 @@
         {
             <div class="premium-card p-4 mb-4">
                 <div class="row align-items-center">
-                    <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="col-md-6">
                         <h4 class="fw-bold mb-1">Week @item.WeekNumber</h4>
                         <p class="text-muted-premium mb-0">Due: @item.DueDate.ToString("dddd, dd MMMM yyyy HH:mm")</p>
                     </div>
-                    <div class="col-md-3 mb-3 mb-md-0 text-md-end">
-                        <span class="text-muted small text-uppercase fw-bold">Amount</span>
+                    <div class="col-md-3 text-md-end">
                         <h3 class="fw-bold mb-0">R @item.Amount.ToString("N2")</h3>
                     </div>
                     <div class="col-md-3 text-md-end">
                         @if (item.Status == StokSafe.Models.Enums.ContributionStatus.Pending)
                         {
-                            <!-- THE FIX IS HERE: Link directly to the Details page using the ID -->
-                            <a href="/Member/Contribution/Details/@item.Id" class="btn btn-accent w-100 py-2 shadow">
-                                Make Payment
-                            </a>
+                            <a href="/Member/Contribution/Details/@item.Id" class="btn btn-accent w-100 py-2 shadow">Make Payment</a>
                         }
                         else
                         {

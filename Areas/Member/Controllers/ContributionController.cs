@@ -33,7 +33,6 @@ public class ContributionController : Controller
         _userManager = userManager;
     }
 
-    // GET: /Member/Contribution
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -45,7 +44,6 @@ public class ContributionController : Controller
         var now = DateTime.UtcNow;
         var currentWeekNumber = System.Globalization.ISOWeek.GetWeekOfYear(now);
 
-        // ONLY fetch the contribution for the current week
         var currentContribution = await _db.Contributions
             .Where(c => c.ClubMemberId == member.Id && c.WeekNumber == currentWeekNumber)
             .ToListAsync();
@@ -53,7 +51,7 @@ public class ContributionController : Controller
         return View(currentContribution);
     }
 
-    // GET: /Member/Contribution/Details/5
+    // THIS is the action that was missing (causing the 404)
     public async Task<IActionResult> Details(int id)
     {
         var contribution = await _contributionService.GetContributionAsync(id);
@@ -61,15 +59,6 @@ public class ContributionController : Controller
         return View(contribution);
     }
 
-    // GET: /Member/Contribution/Pay
-    // This catches the Dashboard button if it sends a GET request
-    
-
-    // POST: /Member/Contribution/Pay
-    // This catches the Dashboard button if it sends a POST request
-    
-
-    // POST: /Member/Contribution/UploadPop
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UploadPop(int id, IFormFile file)
@@ -116,10 +105,9 @@ public class ContributionController : Controller
             await _notificationService.SendSmsAsync(user.PhoneNumber, msg);
 
         TempData["Success"] = "Proof of Payment uploaded! Awaiting Treasurer approval.";
-        return RedirectToAction(nameof(Details), new { id });
+        return RedirectToAction(nameof(Index));
     }
 
-    // POST: /Member/Contribution/DevPayBypass
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DevPayBypass(int id)
