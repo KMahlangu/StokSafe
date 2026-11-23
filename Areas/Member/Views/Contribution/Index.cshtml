@@ -45,6 +45,7 @@
                     <div class="col-md-3 text-md-end">
                         @if (item.Status == StokSafe.Models.Enums.ContributionStatus.Pending)
                         {
+                            <!-- THE FIX IS HERE: Link directly to the Details page using the ID -->
                             <a href="/Member/Contribution/Details/@item.Id" class="btn btn-accent w-100 py-2 shadow">
                                 Make Payment
                             </a>
